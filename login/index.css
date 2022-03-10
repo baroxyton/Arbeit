@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&family=Roboto+Mono&display=swap');
+:root{
+ --primary: #8AA39B;
+ --secondary: #5C6F68;
+ --accent-1: #95D9C3;
+ --accent-2: #A4F9C8;
+ --accent-3: #A7FFF6;
+}
+body, html{
+	height:100vh;
+	width:100vw;
+	margin:0;
+	font-family: 'Roboto', sans-serif;
+}
+.app{
+	background-color:var(--secondary);
+	height:100vh;
+	width:100vw;
+	display:grid;
+	justify-items: center;
+	align-items: center;
+}
+.prompt{
+	max-height:90vh;
+	max-width:90vw;
+	width:80vw;
+	height:50vw;
+	background-color:var(--primary);
+	border-radius:5px;
+	box-shadow: 5px 5px 15px 8px rgba(0,0,0,0.42); 
+	overflow:auto;
+}
+.title{
+	margin:10px;
+	color:var(--accent-1);
+	font-size:calc(2.5vh + 2.5vw);
+	font-weight:bolder;
+	text-align:center;
+}
+.form{
+display:grid;
+justify-items:center;
+align-items:center;
+}
+input{
+width:90%;
+background-color:var(--secondary);
+border:none;
+font-size:calc(2vh + 2vw);
+margin-top:30px;
+margin-bottom:30px;
+color:#A7FFF6E0;
+border-radius:3px;
+padding:5px;
+}
+::placeholder{
+color:#A7FFF6A0
+}
+.button{
+background-color: var(--secondary);
+padding:8px;
+padding-left:20px;
+padding-right:20px;
+color:var(--accent-3);
+font-weight:bolder;
+font-size:calc(1.5vh + 1.5vw);
+border-radius:3px;
+cursor:pointer;
+
+}
