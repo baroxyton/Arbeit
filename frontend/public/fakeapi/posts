@@ -6,6 +6,17 @@
         "text":"This post was delivered through redux trunk http!",
         "likes":10,
         "dislikes":2,
+        "comments":1,
         "like_state":"NONE"
+    },
+    {
+        "id": "1",
+        "user": { "name": "anothertest", "image": "/images/default-profile.svg" },
+        "title": "Hallo von Redux!",
+        "text":"Dieser Post wurde von Redux durch http geladen",
+        "likes":10,
+        "dislikes":55,
+        "comments":10,
+        "like_state":"DISLIKE"
     }
 ]
