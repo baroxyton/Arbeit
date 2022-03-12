@@ -1,0 +1,11 @@
+[
+    {
+        "id": "0",
+        "user": { "name": "testuser", "image": "/images/default-profile.svg" },
+        "title": "Hello from Redux!",
+        "text":"This post was delivered through redux trunk http!",
+        "likes":10,
+        "dislikes":2,
+        "like_state":"NONE"
+    }
+]
