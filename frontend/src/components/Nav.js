@@ -2,6 +2,7 @@ import React from "react-dom";
 import {Button} from './Elements.js'
 import Notification from './Notification.js';
 import Menu from './Menu.js';
+import {Link} from "react-router-dom";
 function notificationMenu(event){
     document.getElementById("menu-notifications").style.display = "block";
     const rect = event.target.getBoundingClientRect();
@@ -12,7 +13,7 @@ function Nav(){
     return (
 <div className="w-full h-20 bg-primary shadow-xl fixed overflow-auto">
     <div className="flex float-left">
-    <Button>Neues Posting</Button>
+    <Link to="/newpost" className="mt-auto mb-auto"><Button>Neues Posting</Button></Link>
     <Button>Suche</Button>
     <Notification onClick={notificationMenu}/>
     </div>

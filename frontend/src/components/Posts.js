@@ -1,17 +1,16 @@
 import React from "react-dom"
-import {useEffect} from 'react';
-import store from "../redux/store.js";
-import { Provider, useDispatch, useSelector} from 'react-redux';
+import { useEffect,} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Post from './Post.js'
-import { createAsyncThunk} from '@reduxjs/toolkit'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   return await (await fetch("/fakeapi/posts")).json();
 });
-function generatePosts(data){
-  return data.map(post=>{
-    return (<Provider store={store}>
-    <Post postid={post.id}></Post>
-    </Provider>)
+function generatePosts(data) {
+  return data.map(post => {
+    return (
+      <Post postid={post.id} key={post.id}></Post>
+      )
   })
 }
 function Posts(props) {
@@ -22,17 +21,15 @@ function Posts(props) {
     if (posts.state == "idle") {
       dispatch(fetchPosts())
     }
-    if(posts.state =="pending"){
+    if (posts.state == "pending") {
       // Lädt..
     }
-    if(posts.state == "fulfilled"){
-      let reactPosts = generatePosts(posts.list);
-      let container = document.getElementById("postcontainer")
-      React.render(reactPosts, container)
+    if (posts.state == "fulfilled") {
+     // Success !
     }
   }, [posts.state, dispatch])
   return (<div className="w-4/5 ml-auto mr-auto" id="postcontainer">
- Lädt..
+    {generatePosts(posts.list)};
   </div>);
 }
 export default Posts;
