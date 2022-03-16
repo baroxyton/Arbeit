@@ -35,7 +35,7 @@ function Post(props) {
         </div>
         <br></br>
         <div className="flex">
-        <Link to={"/posts/"+post.id}><div style={{ "backgroundImage": "url('/images/comment.svg')" }} className="h-12 w-12 bg-center bg-auto bg-no-repeat m-3"></div></Link>
+        <Link to={"/post/"+post.id}><div style={{ "backgroundImage": "url('/images/comment.svg')" }} className="h-12 w-12 bg-center bg-auto bg-no-repeat m-3"></div></Link>
             <div className="mt-auto mb-auto text-accent-1">{post.comments}</div>
             <div onClick={like} style={{ "backgroundImage": `url('${like_image}')` }} className="h-12 w-12 bg-center bg-cover bg-no-repeat m-3 like"></div>
             <div className="mt-auto mb-auto text-accent-1">{post.likes}</div>
