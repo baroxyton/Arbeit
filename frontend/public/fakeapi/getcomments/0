@@ -1,0 +1,18 @@
+[
+    {
+        "id":0,
+        "user":{"name":"hello, world","image":"/images/default-profile.svg"},
+        "likes":3,
+        "dislikes":1,
+        "like_state":"LIKE",
+        "text":"hello, worldos"
+    },
+    {
+        "id":1,
+        "user":{"name":"sussus","image":"/images/default-profile.svg"},
+        "likes":3,
+        "dislikes":1,
+        "like_state":"DISLIKE",
+        "text":"Lorum ipsumdolorem"
+    }
+]

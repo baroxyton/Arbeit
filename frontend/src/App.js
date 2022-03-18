@@ -4,6 +4,7 @@ import Posts from "./components/Posts.js"
 import Wrap from './components/Wrap.js';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import NewPost from './components/NewPost.js';
+import ViewPost from './components/ViewPost';
 function App() {
   return (
     <div className="App">
@@ -12,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Posts/>} />
             <Route path="/newpost" element={<NewPost/>}></Route>
+            <Route path="/post/:id" element={<ViewPost/>}></Route>
           </Routes>
           </Wrap>
         </Router>
