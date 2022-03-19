@@ -8,6 +8,19 @@ let commentInitial = {
     list: [],
     state: "idle"
 }
+let userInitial = {
+    image: "/images/default-profile.svg",
+    name: "Loading.."
+}
+function userReducer(state = userInitial, action) {
+    console.log(action, "user reducer")
+    switch (action.type) {
+        case "user/fetchUser/fulfilled":
+            return action.payload;
+        default:
+            return state;
+    }
+}
 function commentReducer(state = commentInitial, action) {
     console.log(state, "comment reducer")
     let stateClone = JSON.parse(JSON.stringify(state));
@@ -139,6 +152,6 @@ function postReducer(state = postInitial, action) {
             return state;
     }
 }
-const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer });
+const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer, user:userReducer });
 
 export default reducer;

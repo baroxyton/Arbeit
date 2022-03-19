@@ -29,7 +29,7 @@ function Post(props) {
     return (<div className="w-full bg-primary rounded-xl mt-3 p-3 shadow-md">
         <Link to={"/profile/"+post.user.name}><div className="cursor-pointer float-left rounded-full h-12 mr-2 w-12 bg-center bg-no-repeat bg-contain shadow-sm" style={{ backgroundImage: `url("${post.user.image}")` }}></div>
         <div className="float-left text-sm text-accent-3 cursor-pointer">{post.user.name}</div></Link>
-        <div className="text-center text-3xl font-black text-accent-2 cursor-pointer ">{post.title}</div>
+        <Link to={"/post/"+post.id}><div className="text-center text-3xl font-black text-accent-2 cursor-pointer ">{post.title}</div></Link>
         <br></br>
         <div className="text-center text-accent-1 text-md">{post.text}
         </div>

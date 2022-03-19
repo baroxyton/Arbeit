@@ -29,7 +29,7 @@ function Posts(props) {
     }
   }, [posts.state, dispatch])
   return (<div className="w-4/5 ml-auto mr-auto" id="postcontainer">
-    {generatePosts(posts.list)};
+    {generatePosts(posts.list)}
   </div>);
 }
 export default Posts;
