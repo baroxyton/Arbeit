@@ -78,7 +78,10 @@ function commentReducer(state = commentInitial, action) {
                     break;
             }
             return stateClone;
-            break;
+            case "POST_COMMENT":
+                stateClone.list.unshift(action.data);
+                return stateClone;
+                break;
         default:
             return state;
     }

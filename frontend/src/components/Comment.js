@@ -34,10 +34,8 @@ function Comment(props) {
     return (<div className="w-4/5 bg-primary rounded-xl mt-3 p-3 shadow-md">
         <Link to={"/profile/"+post.user.name}><div className="float-left rounded-full h-12 mr-2 w-12 bg-center bg-no-repeat bg-contain shadow-sm cursor-pointer" style={{ backgroundImage: `url("${post.user.image}")` }}></div>
         <div className="float-left text-sm text-accent-3 cursor-pointer">{post.user.name}</div></Link>
-        <div className="text-center text-3xl font-black text-accent-2 cursor-pointer">{post.title}</div>
         <br></br>
-        <div className="text-center text-accent-1 text-md">{post.text}
-        </div>
+        <div className="text-center text-accent-1 text-md">{post.text}</div>
         <br></br>
         <div className="flex">
         <div onClick={commentReply} style={{ "backgroundImage": "url('/images/comment-reply.svg')" }} className="h-12 w-12 bg-center bg-auto bg-no-repeat m-3"></div>
