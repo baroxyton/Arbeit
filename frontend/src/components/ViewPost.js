@@ -26,11 +26,6 @@ function generateSubmitComment(data, dispatch) {
         comment(data, dispatch);
     }
 }
-function generateTest() {
-    return function () {
-        alert(1);
-    }
-}
 
 function ViewPost(props) {
     const dispatch = useDispatch();
