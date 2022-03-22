@@ -9,13 +9,18 @@ const fetchUserData = createAsyncThunk("user/fetchUser", async (id) => {
     return await (await fetch("/fakeapi/user")).json();
 });
 function notificationMenu(event) {
-    document.getElementById("menu-notifications").style.display = "block";
+    document.getElementById("overlay-notifications").style.display = "block";
     const rect = event.target.getBoundingClientRect();
     document.getElementById("menu-notifications").style.top = "3rem";
     document.getElementById("menu-notifications").style.left = rect.left + "px";
 }
+function navMenu() {
+    document.getElementById("overlay-navmenu").style.display = "block";
+    document.getElementById("menu-navmenu").style.right = "0";
+    document.getElementById("menu-navmenu").style.top = "3em";
+}
 function Nav() {
-    const user = useSelector(state=>state.user);
+    const user = useSelector(state => state.user);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchUserData());
@@ -28,10 +33,18 @@ function Nav() {
                 <Notification onClick={notificationMenu} />
             </div>
             <div className="flex float-right">
-                <div className="m-3 h-12 w-12 rounded-full bg-center bg-cover" style={{ backgroundImage: "url('/images/default-profile.svg')" }}></div>
-                <div className="m-5 m-left:10 text-accent-1 text-xl font-black">{user.name}</div>
+                <Link to={"/profile/" + user.name}></Link>
+                <div className="m-3 h-12 w-12 rounded-full bg-center bg-cover" onClick={navMenu} style={{ backgroundImage: "url('/images/default-profile.svg')" }}></div>
+                <Link to={"/profile/" + user.name}><div className="m-5 m-left:10 text-accent-1 text-xl font-black">{user.name}</div></Link>
             </div>
             <Menu name="notifications" style={{ transform: "translate(-50%)" }}></Menu>
+            <Menu name="navmenu">
+                <div className="h-full w-full grid justify-center items-center">
+                <Link to="/" className="text-xl text-accent-2">Startseite</Link>
+                <Link to="/chats" className="text-xl text-accent-2">Chats</Link>
+                <Link to="/einstellungen" className="text-xl text-accent-2">Einstellungen</Link>
+                </div>
+            </Menu>
         </div>
     )
 }
