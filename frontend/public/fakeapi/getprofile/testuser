@@ -1,0 +1,20 @@
+{
+    "name": "testuser",
+    "image": "/images/default-profile.svg",
+    "bio": "lorum ipsum",
+    "history": [
+        {
+            "id": "3",
+            "likes": 1,
+            "dislikes": 0,
+            "title": "Dies ist ein Titel",
+            "like_state": "DISLIKE",
+            "text": "hello, world",
+            "comments":"55",
+            "user": {
+                "name": "testuser",
+                "image": "/images/default-profile.svg"
+            }
+        }
+    ]
+}

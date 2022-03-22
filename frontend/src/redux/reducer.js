@@ -26,6 +26,11 @@ function commentReducer(state = commentInitial, action) {
     let stateClone = JSON.parse(JSON.stringify(state));
     let id, post, postIndex;
     switch (action.type) {
+        case "LOAD_COMMENTS":
+            stateClone.list = action.comments;
+            stateClone.id = -1;
+            return stateClone;
+            break;
         case "comments/fetchComments/pending":
             return { ...state, state: "pending" };
             break;
@@ -78,10 +83,10 @@ function commentReducer(state = commentInitial, action) {
                     break;
             }
             return stateClone;
-            case "POST_COMMENT":
-                stateClone.list.unshift(action.data);
-                return stateClone;
-                break;
+        case "POST_COMMENT":
+            stateClone.list.unshift(action.data);
+            return stateClone;
+            break;
         default:
             return state;
     }
@@ -91,6 +96,10 @@ function postReducer(state = postInitial, action) {
     console.log(action, "reducer");
     let post, postIndex, id;
     switch (action.type) {
+        case "LOAD_PROFILE_POSTS":
+            stateClone.state = "idle";
+            stateClone.list = action.posts;
+            return stateClone;
         case "posts/fetchPosts/pending":
             return { ...state, state: "pending" };
             break;
@@ -155,6 +164,6 @@ function postReducer(state = postInitial, action) {
             return state;
     }
 }
-const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer, user:userReducer });
+const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer, user: userReducer });
 
 export default reducer;
