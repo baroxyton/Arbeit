@@ -11,6 +11,7 @@
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "express": "^4.17.3",
+    "simple-json-db": "^2.0.0",
     "socket.io": "^4.4.1"
   }
 }

@@ -1,26 +1,36 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="./index.css">
-		<title>Registrieren</title>
-	</head>
-	<body>
-		<div class="app">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/signup/index.css">
+	<script src="/signup/index.js" type="module"></script>
+	<title>Registrieren</title>
+</head>
+
+<body>
+	<div class="app">
 		<div class="prompt">
 			<div class="title">
 				Registrieren
 			</div>
 			<div class="form">
-				<input placeholder="Nutzername">
-				<input placeholder="Passwort" type="password" id="password">
-				<input placeholder="Passwort Wiederholen" type="password" id="passwordRepeat">
-				<div class="button">
-					Fortfahren
+				<div id="userinput">
+					<input placeholder="Nutzername" id="username">
+					<input placeholder="Passwort" type="password" id="password">
+					<input placeholder="Passwort Wiederholen" type="password" id="passwordRepeat">
+					<div class="button" id="submitButton">
+						Fortfahren
+					</div>
+				</div>
+				<div id="error" style="display:none">
+					<div id="errormessage">Dies ist ein Fehler</div>
+					<div class="button" id="hideerror">Erneut versuchen</div>
 				</div>
 			</div>
 			<a href="/">Einloggen</a>
 		</div>
-		</div>
-	</body>
+	</div>
+</body>
+
 </html>
