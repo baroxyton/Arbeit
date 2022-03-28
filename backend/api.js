@@ -1,3 +1,5 @@
+const User = require("./User.js");
+const database = require("./database.js");
 const usernameRegex = /^[a-zA-Z]([a-zA-Z\-_0-9]){1,20}$/;
 const charRegex = /[a-zA-Z\-_0-9]/;
 function api(req, res) {
@@ -38,8 +40,24 @@ function api(req, res) {
                 sendJSON({
                     status: "error",
                     error: `Nutzername enthält unerlaubtes Zeichen: "${disallowedChar || "Am anfang"}". Bitte verwenden Sie nur Buchstaben, Zahlen, _ und -. Das erste Zeichen muss ein Buchstabe sein`
-                })
+                });
+                return;
             }
+            console.log(database.findUser(username));
+            if(database.findUser(username)){
+                sendJSON({
+                    status:"error",
+                    error:"Nutzername bereits besetzt - bitte wähle einen anderen"
+                });
+                return;
+            }
+            // signup check successfull
+            let newUser = new User();
+            newUser.new(username, password);
+            sendJSON({
+                status:"error",
+                error:"erfolg!"
+            })
             break;
     }
 }

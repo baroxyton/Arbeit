@@ -25,8 +25,10 @@ async function signup() {
             password
         })
     });
-    const json = response.json();
-
+    const json = await response.json();
+    if(json.status == "error"){
+        showError(json.error);
+    }
 }
 function showError(error) {
     document.getElementById("userinput").style.display = "none";
