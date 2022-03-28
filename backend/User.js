@@ -17,12 +17,18 @@ class User {
     load(data) {
         this.data = data;
     }
+    loadUser(name){
+        this.load(database.findUser(name));
+    }
     new(username, password) {
         this.data = newUser(username, password);
         database.addUser(this.data);
     }
     updateDB() {
         database.updateUser(this.data);
+    }
+    checkLogin(password){
+        return createPasswordHash(this.data.name, password) == this.data.password;
     }
 }
 module.exports = User;

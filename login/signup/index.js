@@ -26,7 +26,7 @@ async function signup() {
         })
     });
     const json = await response.json();
-    if(json.status == "error"){
+    if (json.status == "error") {
         showError(json.error);
     }
 }

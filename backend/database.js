@@ -1,5 +1,5 @@
 const JSONdb = require("simple-json-db");
-let db = new JSONdb('./.data.json');
+let db = new JSONdb( __dirname + '/.data.json');
 function initDB() {
 
 }
