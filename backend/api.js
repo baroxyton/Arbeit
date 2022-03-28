@@ -1,7 +1,20 @@
 const User = require("./User.js");
 const database = require("./database.js");
+const svgCaptcha = require('svg-captcha');
+let captchas = [];
 const usernameRegex = /^[a-zA-Z]([a-zA-Z\-_0-9]){1,20}$/;
 const charRegex = /[a-zA-Z\-_0-9]/;
+function checkCaptcha(id, answer) {
+    if (!answer || id === undefined) {
+        return false;
+    }
+    const captcha = captchas[Number(id)].toLowerCase();
+    const isCorrect = captcha == answer.toLowerCase();
+    if (isCorrect) {
+        captchas.splice(id, null);
+    }
+    return isCorrect;
+}
 function api(req, res) {
     function sendJSON(json) {
         res.send(JSON.stringify(json));
@@ -11,9 +24,26 @@ function api(req, res) {
     const param3 = req.params.endpoint3;
     let status = true;
     switch (param1) {
+        case "generateCaptcha": {
+            const captchaIndex = captchas.length;
+            const captchaSVG = svgCaptcha.create({ ignoreChars: "0o1iIl" });
+            captchas.push(captchaSVG.text);
+            res.setHeader("content-type", "application/json")
+            sendJSON({
+                image: captchaSVG.data,
+                index: captchaIndex
+            });
+            break;
+        }
         case "signup": {
-            console.log(req.body)
-            const { username, password } = req.body;
+            const { username, password, captchaAnswer, captchaId } = req.body;
+            if (!checkCaptcha(captchaId, captchaAnswer)) {
+                sendJSON({
+                    status: "error",
+                    error: "Verifizierung: falsche Antwort. Bitte versuche es erneut"
+                });
+                return;
+            }
             if (!username || !password) {
                 sendJSON({
                     status: "error",
@@ -43,7 +73,6 @@ function api(req, res) {
                 });
                 return;
             }
-            console.log(database.findUser(username));
             if (database.findUser(username)) {
                 sendJSON({
                     status: "error",

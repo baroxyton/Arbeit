@@ -1,6 +1,14 @@
+let captchaId;
+async function loadCaptcha() {
+    const { image, index } = await (await fetch("/api/generateCaptcha")).json();
+    const dataURL = `data:image/svg+xml;base64,${btoa(image)}`;
+    document.getElementById("catpchaImage").src = dataURL;
+    captchaId = index;
+}
 async function signup() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+    const captchaAnswer = document.getElementById("captchaValue").value;
     const passwordRepeat = document.getElementById("passwordRepeat").value;
     if (!username) {
         showError("Nutzername wird benötigt!");
@@ -22,7 +30,9 @@ async function signup() {
         },
         body: JSON.stringify({
             username,
-            password
+            password,
+            captchaAnswer,
+            captchaId
         })
     });
     const json = await response.json();
@@ -41,3 +51,4 @@ function hideError() {
 }
 document.getElementById("submitButton").onclick = signup;
 document.getElementById("hideerror").onclick = hideError;
+loadCaptcha();
