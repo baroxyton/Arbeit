@@ -1,4 +1,5 @@
 const User = require("./User.js");
+const crypto = require("crypto");
 const database = require("./database.js");
 const svgCaptcha = require('svg-captcha');
 let captchas = [];
@@ -15,14 +16,39 @@ function checkCaptcha(id, answer) {
     }
     return isCorrect;
 }
-function api(req, res) {
-    function sendJSON(json) {
-        res.send(JSON.stringify(json));
+function findUserLogin(loginCookie) {
+    if (!loginCookie) {
+        return false;
     }
+    const sessionHash = crypto.createHash("sha256").update(loginCookie).digest("hex");
+    const session = database.findSession(sessionHash);
+    if (!session) {
+        return;
+    }
+    if (session.expire < Date.now()) {
+        return;
+    }
+    return session;
+}
+function api(req, res) {
+    const loginCookie = req.cookies.login;
+    const account = findUserLogin(loginCookie);
+    if (!account) {
+        loggedoutApi(req, res);
+        return;
+    }
+    const user = new User();
+    user.loadUser(account.name);
+    loggedinApi(req, res, user);
+}
+
+function loggedoutApi(req, res) {
     const param1 = req.params.endpoint;
     const param2 = req.params.endpoint2;
     const param3 = req.params.endpoint3;
-    let status = true;
+    function sendJSON(json) {
+        res.send(JSON.stringify(json));
+    }
     switch (param1) {
         case "generateCaptcha": {
             const captchaIndex = captchas.length;
@@ -127,5 +153,14 @@ function api(req, res) {
             });
         }
     }
+}
+function loggedinApi(req, res, user) {
+    const param1 = req.params.endpoint;
+    const param2 = req.params.endpoint2;
+    const param3 = req.params.endpoint3;
+    function sendJSON(json) {
+        res.send(JSON.stringify(json));
+    }
+    res.send("welcome, " + user.data.name);
 }
 module.exports = api;
