@@ -161,6 +161,12 @@ function loggedinApi(req, res, user) {
     function sendJSON(json) {
         res.send(JSON.stringify(json));
     }
-    res.send("welcome, " + user.data.name);
+    switch (param1) {
+        case "user": {
+            const data = { image: user.data.image, name: user.data.name };
+            sendJSON(data);
+        }
+            break;
+    }
 }
 module.exports = api;

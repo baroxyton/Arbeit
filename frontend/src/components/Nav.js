@@ -6,7 +6,7 @@ import Notification from './Notification.js';
 import Menu from './Menu.js';
 import { Link } from "react-router-dom";
 const fetchUserData = createAsyncThunk("user/fetchUser", async (id) => {
-    return await (await fetch("/fakeapi/user")).json();
+    return await (await fetch("/api/user")).json();
 });
 function notificationMenu(event) {
     document.getElementById("overlay-notifications").style.display = "block";
@@ -34,7 +34,7 @@ function Nav() {
             </div>
             <div className="flex float-right">
                 <Link to={"/profile/" + user.name}></Link>
-                <div className="m-3 h-12 w-12 rounded-full bg-center bg-cover" onClick={navMenu} style={{ backgroundImage: "url('/images/default-profile.svg')" }}></div>
+                <div className="m-3 h-12 w-12 rounded-full bg-center bg-cover" onClick={navMenu} style={{ backgroundImage:`url('${user.image}')` }}></div>
                 <Link to={"/profile/" + user.name}><div className="m-5 m-left:10 text-accent-1 text-xl font-black">{user.name}</div></Link>
             </div>
             <Menu name="notifications" style={{ transform: "translate(-50%)" }}></Menu>

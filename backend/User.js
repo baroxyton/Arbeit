@@ -22,6 +22,7 @@ function newUser(username, password) {
         name: username,
         password: createPasswordHash(username, password),
         roles: ["user"],
+        image:"/images/default-profile.svg",
         sessions: []
     }
 }
