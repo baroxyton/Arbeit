@@ -40,7 +40,6 @@ async function signup() {
         showError(json.error);
         return;
     }
-    alert(json.session);
     document.cookie = `login=${json.session}; path=/; max-age=31536000`;
     location = "/";
 }

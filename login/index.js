@@ -24,6 +24,8 @@ async function login() {
     if (json.status == "error") {
         showError(json.error);
     }
+    document.cookie = `login=${json.session}; path=/; max-age=31536000`;
+    location = "/";
 }
 function showError(error) {
     document.getElementById("userinput").style.display = "none";
