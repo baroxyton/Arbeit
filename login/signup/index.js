@@ -38,7 +38,11 @@ async function signup() {
     const json = await response.json();
     if (json.status == "error") {
         showError(json.error);
+        return;
     }
+    alert(json.session);
+    document.cookie = `login=${json.session}; path=/; max-age=31536000`;
+    location = "/";
 }
 function showError(error) {
     document.getElementById("userinput").style.display = "none";

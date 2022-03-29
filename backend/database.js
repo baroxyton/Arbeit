@@ -1,5 +1,5 @@
 const JSONdb = require("simple-json-db");
-let db = new JSONdb( __dirname + '/.data.json');
+let db = new JSONdb(__dirname + '/.data.json');
 function initDB() {
 
 }
@@ -8,7 +8,8 @@ if (!db.get("init")) {
         users: [],
         posts: [],
         comments: [],
-        init:true
+        sessions: [],
+        init: true
     })
     initDB();
 }
@@ -17,9 +18,14 @@ class Database {
         this.userdata = db.get("users");
         this.postdata = db.get("posts");
         this.commentData = db.get("comments");
+        this.sessionData = db.get("sessions");
     }
     syncDB() {
         db.sync();
+    }
+    syncSessions() {
+        db.set("session", this.sessionData);
+        this.syncDB();
     }
     syncUsers() {
         db.set("users", this.userdata);
@@ -37,6 +43,7 @@ class Database {
         this.syncUsers();
         this.syncPosts();
         this.syncComments();
+        this.syncSessions();
     }
     findUserIndex(name) {
         return this.userdata.findIndex(user => user.name == name);
@@ -54,6 +61,14 @@ class Database {
         this.userdata.splice(index, 1, user);
         this.syncUsers();
     }
+    addSession(session) {
+        this.sessionData.push(session);
+        this.syncSessions();
+    }
+    findSession(hash) {
+        return this.sessionData.find(session => session.hash == hash);
+    }
+
 }
 const database = new Database();
 module.exports = database;

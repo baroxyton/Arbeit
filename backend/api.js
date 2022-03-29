@@ -83,9 +83,10 @@ function api(req, res) {
             // signup check successfull
             let newUser = new User();
             newUser.new(username, password);
+            const session = newUser.createSession();
             sendJSON({
-                status: "error",
-                error: "erfolg!"
+                status: "success",
+                session
             });
             break;
         }
@@ -118,10 +119,12 @@ function api(req, res) {
                 return;
             }
             // Successful login
+            const session = user.createSession();
+
             sendJSON({
-                status: "error",
-                error: "success"
-            })
+                status: "success",
+                session
+            });
         }
     }
 }

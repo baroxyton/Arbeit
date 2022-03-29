@@ -1,11 +1,34 @@
 const express = require("express");
 const path = require("path");
+const crypto = require("crypto");
+const cookieParser = require("cookie-parser");
 const app = express();
+const database = require("./database.js");
 app.use(express.json())
+app.use(cookieParser())
 const api = require("./api.js");
+
 app.all("/api/:endpoint/:endpoint2?/:endpoint3?", api);
+
 app.use("/", [function (req, res, next) {
-    serveLogin(req, res);
+    const loginCookie = req.cookies.login;
+    if (!loginCookie) {
+        serveLogin(req, res);
+        return;
+    }
+    const sessionHash = crypto.createHash("sha256").update(loginCookie).digest("hex");
+    const session = database.findSession(sessionHash);
+    if (!session) {
+        serveLogin(req, res);
+        return;
+    }
+    if (session.expire < Date.now()) {
+        serveLogin(req, res);
+        return;
+    }
+    console.log(session);
+    // successful login;
+    next();
 }, express.static(__dirname + "/../frontend/build/")]);
 
 function serveLogin(req, res) {
