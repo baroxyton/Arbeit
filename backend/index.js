@@ -29,6 +29,12 @@ app.use("/", [function (req, res, next) {
     console.log(session);
     // successful login;
     next();
+}, function (req, res, next) {
+    if (req.path.includes(".")||req.path.includes("fakeapi")) {
+        next();
+        return;
+    }
+    res.sendFile(path.resolve(__dirname + "/../frontend/build/index.html"))
 }, express.static(__dirname + "/../frontend/build/")]);
 
 function serveLogin(req, res) {

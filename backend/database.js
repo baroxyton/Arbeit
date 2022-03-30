@@ -72,7 +72,13 @@ class Database {
         this.postdata.push(post);
         this.syncPosts();
     }
-
+    addComment(comment){
+        this.commentData.push(comment);
+        this.syncComments();
+    }
+    getPost(id){
+        return this.postdata.find(post=>post.id==id);
+    }
 }
 const database = new Database();
 module.exports = database;

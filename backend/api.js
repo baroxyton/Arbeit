@@ -18,6 +18,43 @@ function checkCaptcha(id, answer) {
     }
     return isCorrect;
 }
+// Send post without sensitive information
+/*
+Post props:
+        id: database.postdata.length,
+        title,
+        post,
+        user: user.data.name,
+        likes: 1,
+        dislikes: 0,
+        likers: [user.data.name],
+        dislikers: [],
+        comments: 0
+*/
+function frontendPostFormat(post, user) {
+    console.log({ post, }, "post");
+    const postUser = new User();
+    postUser.loadUser(post.user);
+    const isInLikes = post.likers.includes(user.data.name);
+    const isInDislikse = post.dislikers.includes(user.data.name);
+    let like_state = "NONE";
+    isInLikes ? like_state = "LIKE" : 0;
+    isInDislikse ? like_state = "DISLIKE" : 0;
+    return {
+        id: post.id,
+        title: post.title,
+        text: post.text,
+        user: {
+            name: postUser.data.name,
+            image: postUser.data.image
+
+        },
+        likes: post.likes,
+        dislikes: post.dislikes,
+        like_state,
+        comments: post.comments
+    }
+}
 function findUserLogin(loginCookie) {
     if (!loginCookie) {
         return false;
@@ -163,14 +200,30 @@ function loggedoutApi(req, res) {
         }
     }
 }
-function createPost(user, title, post) {
+function createPost(user, title, text) {
     return {
         id: database.postdata.length,
         title,
-        post,
+        text,
         user: user.data.name,
         likes: 1,
-        likers: [user.data.name]
+        dislikes: 0,
+        likers: [user.data.name],
+        dislikers: [],
+        comments: 0
+    }
+}
+function createComment(user, text, parentID) {
+    return {
+        id: database.commentData.length,
+        text,
+        parentID,
+        user: user.data.name,
+        likes: 1,
+        dislikes: 0,
+        likers: [user.data.name],
+        dislikers: [],
+        comments: 0
     }
 }
 function loggedinApi(req, res, user) {
@@ -193,9 +246,14 @@ function loggedinApi(req, res, user) {
                     status: "error",
                     error: "Post zu lang"
                 });
+                return;
             }
             if (title.length > 20) {
-
+                sendJSON({
+                    status: "error",
+                    error: "Titel zu lang"
+                });
+                return;
             }
             const post = createPost(user, filter.clean(title), filter.clean(text));
             database.addPost(post);
@@ -205,6 +263,39 @@ function loggedinApi(req, res, user) {
             });
         }
             break;
+        case "posts": {
+            const page = req.query.page;
+            const posts = database.postdata.map(post => frontendPostFormat(post, user));
+            sendJSON(posts);
+            break;
+        }
+        case "getpost": {
+            const post = param2;
+            sendJSON(frontendPostFormat(database.postdata[post], user));
+        }
+            break;
+        case "createcomment": {
+            const { text, parentID } = req.body;
+            if (!database.getPost(parentID)) {
+                sendJSON({
+                    status: "error",
+                    error: "Post nicht gefunden"
+                });
+            }
+            if (text.length > 200) {
+                sendJSON({
+                    status: "error",
+                    error: "Kommentar zu lang"
+                });
+                return;
+            }
+            const comment = createComment(user, filter.clean(text), parentID);
+            database.addComment(comment);
+            database.getPost(comment.parentID).comments++;
+            database.syncPosts();$
+            sendJSON({ status: "success" });
+            break;
+        }
     }
 }
 module.exports = api;

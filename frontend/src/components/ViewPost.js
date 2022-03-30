@@ -6,7 +6,7 @@ import Post from "./Post.js";
 import Comment from "./Comment.js"
 import { Button } from "./Elements.js"
 const fetchPost = createAsyncThunk("posts/fetchPost", async (id) => {
-    return await (await fetch("/fakeapi/getpost/" + id)).json();
+    return await (await fetch("/api/getpost/" + id)).json();
 });
 const fetchComments = createAsyncThunk("comments/fetchComments", async (id) => {
     return { comments: await (await fetch("/fakeapi/getcomments/" + id)).json(), id };
@@ -14,7 +14,17 @@ const fetchComments = createAsyncThunk("comments/fetchComments", async (id) => {
 async function comment(data, dispatch) {
     const text = document.getElementById("commentArea").value;
     document.getElementById("commentArea").value = "";
-    const json = await (await fetch("/fakeapi/createcomment")).json();
+    const json = await (await fetch("/api/createcomment", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            text,
+            parentID: data.parentID
+        })
+    })).json();
     if (json.status == "error") {
         alert(json.error);
         return;
@@ -65,6 +75,7 @@ function ViewPost(props) {
                     <textarea id="commentArea" maxLength="200" cols="50" className="bg-secondary text-accent-1 m-5 resize-none"></textarea>
                     <br></br>
                     <Button onClick={generateSubmitComment({
+                        parentID: postId,
                         user,
                         likes: 1,
                         dislikes: 0,
