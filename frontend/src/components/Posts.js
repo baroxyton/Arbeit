@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Post from './Post.js'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  return await (await fetch("/fakeapi/posts")).json();
+  return await (await fetch("/api/posts")).json();
 });
 function generatePosts(data) {
   return data.map(post => {
