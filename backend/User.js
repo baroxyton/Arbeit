@@ -22,8 +22,7 @@ function newUser(username, password) {
         name: username,
         password: createPasswordHash(username, password),
         roles: ["user"],
-        image:"/images/default-profile.svg",
-        sessions: []
+        image: "/images/default-profile.svg"
     }
 }
 class User {
@@ -48,17 +47,6 @@ class User {
         let store = { expires, hash, name: this.data.name };
         database.addSession(store);
         return cookieValue;
-    }
-    checkSession(sessionCookie) {
-        const browserHash = hash(this.data.password + sessionCookie);
-        const foundLogin = this.sessions.find(session => {
-            if (session.expires < Date.now()) {
-                return false;
-            }
-            if (session.hash == browserHash) {
-                return true;
-            }
-        })
     }
 }
 module.exports = User;

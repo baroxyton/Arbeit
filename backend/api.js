@@ -1,5 +1,7 @@
 const User = require("./User.js");
 const crypto = require("crypto");
+const Filter = require("bad-words");
+const filter = new Filter();
 const database = require("./database.js");
 const svgCaptcha = require('svg-captcha');
 let captchas = [];
@@ -63,6 +65,13 @@ function loggedoutApi(req, res) {
         }
         case "signup": {
             const { username, password, captchaAnswer, captchaId } = req.body;
+            if (filter.isProfane(username)) {
+                sendJSON({
+                    status: "error",
+                    error: "Dieser Nutzername enthält obszöne Sprache"
+                })
+                return;
+            }
             if (!checkCaptcha(captchaId, captchaAnswer)) {
                 sendJSON({
                     status: "error",
@@ -154,6 +163,16 @@ function loggedoutApi(req, res) {
         }
     }
 }
+function createPost(user, title, post) {
+    return {
+        id: database.postdata.length,
+        title,
+        post,
+        user: user.data.name,
+        likes: 1,
+        likers: [user.data.name]
+    }
+}
 function loggedinApi(req, res, user) {
     const param1 = req.params.endpoint;
     const param2 = req.params.endpoint2;
@@ -165,6 +184,25 @@ function loggedinApi(req, res, user) {
         case "user": {
             const data = { image: user.data.image, name: user.data.name };
             sendJSON(data);
+        }
+            break;
+        case "createpost": {
+            const { title, text } = req.body;
+            if (text.length > 500) {
+                sendJSON({
+                    status: "error",
+                    error: "Post zu lang"
+                });
+            }
+            if (title.length > 20) {
+
+            }
+            const post = createPost(user, filter.clean(title), filter.clean(text));
+            database.addPost(post);
+            sendJSON({
+                status: "success",
+                location: "/post/" + post.id
+            });
         }
             break;
     }

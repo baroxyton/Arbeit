@@ -8,7 +8,7 @@ if (!db.get("init")) {
         users: [],
         posts: [],
         comments: [],
-        sessions: [],
+        sessions:[],
         init: true
     })
     initDB();
@@ -24,7 +24,7 @@ class Database {
         db.sync();
     }
     syncSessions() {
-        db.set("session", this.sessionData);
+        db.set("sessions", this.sessionData);
         this.syncDB();
     }
     syncUsers() {
@@ -67,6 +67,10 @@ class Database {
     }
     findSession(hash) {
         return this.sessionData.find(session => session.hash == hash);
+    }
+    addPost(post){
+        this.postdata.push(post);
+        this.syncPosts();
     }
 
 }

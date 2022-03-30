@@ -10,7 +10,20 @@ function generatePost(redirect) {
     }
 }
 async function post(redirect) {
-    const answer = await fetch("/fakeapi/createpost");
+    const text = document.getElementById("text").value;
+    const title = document.getElementById("title").value;
+    const answer = await fetch("/api/createpost", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            text,
+            title
+        })
+    });
+
     const json = await answer.json();
     if (json.status == "success") {
         redirect(json.location);

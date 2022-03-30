@@ -9,6 +9,7 @@
   "author": "baroxyton",
   "license": "ISC",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.3",
     "simple-json-db": "^2.0.0",
