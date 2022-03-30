@@ -9,7 +9,7 @@ const fetchPost = createAsyncThunk("posts/fetchPost", async (id) => {
     return await (await fetch("/api/getpost/" + id)).json();
 });
 const fetchComments = createAsyncThunk("comments/fetchComments", async (id) => {
-    return { comments: await (await fetch("/fakeapi/getcomments/" + id)).json(), id };
+    return { comments: await (await fetch("/api/getcomments/" + id)).json(), id };
 });
 async function comment(data, dispatch) {
     const text = document.getElementById("commentArea").value;

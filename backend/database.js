@@ -79,6 +79,9 @@ class Database {
     getPost(id){
         return this.postdata.find(post=>post.id==id);
     }
+    getPostComments(id){
+        return this.commentData.filter(comment=>comment.parentID==id);
+    }
 }
 const database = new Database();
 module.exports = database;

@@ -19,18 +19,6 @@ function checkCaptcha(id, answer) {
     return isCorrect;
 }
 // Send post without sensitive information
-/*
-Post props:
-        id: database.postdata.length,
-        title,
-        post,
-        user: user.data.name,
-        likes: 1,
-        dislikes: 0,
-        likers: [user.data.name],
-        dislikers: [],
-        comments: 0
-*/
 function frontendPostFormat(post, user) {
     console.log({ post, }, "post");
     const postUser = new User();
@@ -52,7 +40,8 @@ function frontendPostFormat(post, user) {
         likes: post.likes,
         dislikes: post.dislikes,
         like_state,
-        comments: post.comments
+        comments: post.comments,
+        date:post.date
     }
 }
 function findUserLogin(loginCookie) {
@@ -210,7 +199,8 @@ function createPost(user, title, text) {
         dislikes: 0,
         likers: [user.data.name],
         dislikers: [],
-        comments: 0
+        comments: 0,
+        date:Date.now()
     }
 }
 function createComment(user, text, parentID) {
@@ -223,7 +213,8 @@ function createComment(user, text, parentID) {
         dislikes: 0,
         likers: [user.data.name],
         dislikers: [],
-        comments: 0
+        comments: 0,
+        date:Date.now()
     }
 }
 function loggedinApi(req, res, user) {
@@ -292,10 +283,17 @@ function loggedinApi(req, res, user) {
             const comment = createComment(user, filter.clean(text), parentID);
             database.addComment(comment);
             database.getPost(comment.parentID).comments++;
-            database.syncPosts();$
+            database.syncPosts();
             sendJSON({ status: "success" });
             break;
         }
+        case "getcomments":{
+            const commentsParent = param2;
+            const commentsraw = database.getPostComments(commentsParent);
+            const commentsready = commentsraw.map(post => frontendPostFormat(post, user));
+            sendJSON(commentsready)
+        }
+            break;
     }
 }
 module.exports = api;
