@@ -327,33 +327,33 @@ function loggedinApi(req, res, user) {
                 database.syncPosts();
             }
             break;
-        case "dislike_post":{
+        case "dislike_post": {
             res.sendStatus(200);
-                const post_id = param2;
-                const post = database.getPost(post_id);
-                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-                const isLiker = Boolean(post.likers.includes(user.data.name));
-                if (!isLiker && !isDisliker) {
-                    post.dislikers.push(user.data.name);
-                    post.dislikes++;
-                }
-                else if (isDisliker) {
-                    const dislikerIndex = post.dislikes.indexOf(user.data.name);
-                    post.dislikers.splice(dislikerIndex, 1);
-                    post.dislikes--;
-                }
-                else if (isLiker) {
-                    const likerIndex = post.likers.indexOf(user.data.name);
-                    post.likers.splice(likerIndex, 1);
-                    post.dislikers.push(user.data.name);
-                    post.dislikes++;
-                    post.likes--;
-                }
-                database.syncPosts();
+            const post_id = param2;
+            const post = database.getPost(post_id);
+            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+            const isLiker = Boolean(post.likers.includes(user.data.name));
+            if (!isLiker && !isDisliker) {
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+            }
+            else if (isDisliker) {
+                const dislikerIndex = post.dislikes.indexOf(user.data.name);
+                post.dislikers.splice(dislikerIndex, 1);
+                post.dislikes--;
+            }
+            else if (isLiker) {
+                const likerIndex = post.likers.indexOf(user.data.name);
+                post.likers.splice(likerIndex, 1);
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+                post.likes--;
+            }
+            database.syncPosts();
         }
 
             break;
-            case "like_comment":
+        case "like_comment":
             {
                 res.sendStatus(200);
                 const post_id = param2;
@@ -379,32 +379,53 @@ function loggedinApi(req, res, user) {
                 database.syncComments();
             }
             break;
-        case "dislike_comment":{
+        case "dislike_comment": {
             res.sendStatus(200);
-                const post_id = param2;
-                const post = database.getComment(post_id);
-                console.log({post,post_id}, "comment found?")
-                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-                const isLiker = Boolean(post.likers.includes(user.data.name));
-                if (!isLiker && !isDisliker) {
-                    post.dislikers.push(user.data.name);
-                    post.dislikes++;
-                }
-                else if (isDisliker) {
-                    const dislikerIndex = post.dislikes.indexOf(user.data.name);
-                    post.dislikers.splice(dislikerIndex, 1);
-                    post.dislikes--;
-                }
-                else if (isLiker) {
-                    const likerIndex = post.likers.indexOf(user.data.name);
-                    post.likers.splice(likerIndex, 1);
-                    post.dislikers.push(user.data.name);
-                    post.dislikes++;
-                    post.likes--;
-                }
-                database.syncComments();
+            const post_id = param2;
+            const post = database.getComment(post_id);
+            console.log({ post, post_id }, "comment found?")
+            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+            const isLiker = Boolean(post.likers.includes(user.data.name));
+            if (!isLiker && !isDisliker) {
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+            }
+            else if (isDisliker) {
+                const dislikerIndex = post.dislikes.indexOf(user.data.name);
+                post.dislikers.splice(dislikerIndex, 1);
+                post.dislikes--;
+            }
+            else if (isLiker) {
+                const likerIndex = post.likers.indexOf(user.data.name);
+                post.likers.splice(likerIndex, 1);
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+                post.likes--;
+            }
+            database.syncComments();
         }
 
+            break;
+        case "getprofile": {
+            const profile = param2;
+            const user = new User();
+            user.loadUser(profile);
+            let history = [...(
+                database.postdata.filter(post => post.user == profile)
+            ),
+            ...(
+                database.commentData.filter(post => post.user == profile)
+            )
+            ];
+            history.sort((a, b) => b.date - a.date);4
+            history = history.map(post=>frontendPostFormat(post,user));
+            sendJSON({
+                name:user.data.name,
+                image:user.data.image,
+                bio:user.data.bio,
+                history
+            })
+        }
             break;
     }
 }

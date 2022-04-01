@@ -20,7 +20,7 @@ function Profile() {
     const dispatch = useDispatch();
     const [profileState, setState] = useState({});
     async function fetchProfile() {
-        const data = await (await (await fetch("/fakeapi/getprofile/testuser")).json());
+        const data = await (await (await fetch("/api/getprofile/" + user)).json());
         const history = data.history;
         const bio = data.bio;
         const image = data.image;
