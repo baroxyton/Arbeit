@@ -408,8 +408,8 @@ function loggedinApi(req, res, user) {
             break;
         case "getprofile": {
             const profile = param2;
-            const user = new User();
-            user.loadUser(profile);
+            const profileuser = new User();
+            profileuser.loadUser(profile);
             let history = [...(
                 database.postdata.filter(post => post.user == profile)
             ),
@@ -420,9 +420,9 @@ function loggedinApi(req, res, user) {
             history.sort((a, b) => b.date - a.date);4
             history = history.map(post=>frontendPostFormat(post,user));
             sendJSON({
-                name:user.data.name,
-                image:user.data.image,
-                bio:user.data.bio,
+                name:profileuser.data.name,
+                image:profileuser.data.image,
+                bio:profileuser.data.bio,
                 history
             })
         }
