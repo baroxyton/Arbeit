@@ -302,8 +302,8 @@ function loggedinApi(req, res, user) {
         }
             break;
         case "like_post":
-            res.sendStatus(200);
             {
+                res.sendStatus(200);
                 const post_id = param2;
                 const post = database.getPost(post_id);
                 const isDisliker = Boolean(post.dislikers.includes(user.data.name));
@@ -312,13 +312,13 @@ function loggedinApi(req, res, user) {
                     post.likers.push(user.data.name);
                     post.likes++;
                 }
-                else if(isLiker){
+                else if (isLiker) {
                     const likerIndex = post.likers.indexOf(user.data.name);
                     post.likers.splice(likerIndex, 1);
                     post.likes--;
                 }
-                else if(isDisliker){
-                    const dislikerIndex = post.liker.indexOf(user.data.name);
+                else if (isDisliker) {
+                    const dislikerIndex = post.dislikers.indexOf(user.data.name);
                     post.dislikers.splice(dislikerIndex, 1);
                     post.likers.push(user.data.name);
                     post.likes++;
@@ -326,6 +326,32 @@ function loggedinApi(req, res, user) {
                 }
                 database.syncPosts();
             }
+            break;
+        case "dislike_post":{
+            res.sendStatus(200);
+                const post_id = param2;
+                const post = database.getPost(post_id);
+                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+                const isLiker = Boolean(post.likers.includes(user.data.name));
+                if (!isLiker && !isDisliker) {
+                    post.dislikers.push(user.data.name);
+                    post.dislikes++;
+                }
+                else if (isDisliker) {
+                    const dislikerIndex = post.dislikes.indexOf(user.data.name);
+                    post.dislikers.splice(dislikerIndex, 1);
+                    post.dislikes--;
+                }
+                else if (isLiker) {
+                    const likerIndex = post.likers.indexOf(user.data.name);
+                    post.likers.splice(likerIndex, 1);
+                    post.dislikers.push(user.data.name);
+                    post.dislikes++;
+                    post.likes--;
+                }
+                database.syncPosts();
+        }
+
             break;
     }
 }
