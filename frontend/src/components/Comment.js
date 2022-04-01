@@ -23,12 +23,12 @@ function Comment(props) {
             like_image = like_deactivated;
     }
     function like(event){
-        fetch("/fakeapi/comments/"+post.id+"/like");
+        fetch("/api/like_comment/"+post.id);
         dispatch({type:"LIKE_COMMENT", id:post.id});
     }
     function dislike(event){
         dispatch({type:"DISLIKE_COMMENT", id:post.id});
-        fetch("/fakeapi/comments/"+post.id+"/dislike");
+        fetch("/api/dislike_comment/" + post.id);
     }
 
     return (<div className="w-4/5 bg-primary rounded-xl mt-3 p-3 shadow-md">

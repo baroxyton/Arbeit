@@ -79,6 +79,9 @@ class Database {
     getPost(id){
         return this.postdata.find(post=>post.id==id);
     }
+    getComment(id){
+        return this.commentData.find(post=>post.id==id);
+    }
     getPostComments(id){
         return this.commentData.filter(comment=>comment.parentID==id);
     }
