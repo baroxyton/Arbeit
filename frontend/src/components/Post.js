@@ -31,7 +31,7 @@ function Post(props) {
         <div className="float-left text-sm text-accent-3 cursor-pointer">{post.user.name}</div></Link>
         <Link to={"/post/"+post.id}><div className="text-center text-3xl font-black text-accent-2 cursor-pointer ">{post.title}</div></Link>
         <br></br>
-        <div className="text-center text-accent-1 text-md">{post.text}
+        <div className="text-center text-accent-1 text-md break-all">{post.text}
         </div>
         <br></br>
         <div className="flex">
