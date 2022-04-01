@@ -338,7 +338,7 @@ function loggedinApi(req, res, user) {
                 post.dislikes++;
             }
             else if (isDisliker) {
-                const dislikerIndex = post.dislikes.indexOf(user.data.name);
+                const dislikerIndex = post.dislikers.indexOf(user.data.name);
                 post.dislikers.splice(dislikerIndex, 1);
                 post.dislikes--;
             }
@@ -391,7 +391,7 @@ function loggedinApi(req, res, user) {
                 post.dislikes++;
             }
             else if (isDisliker) {
-                const dislikerIndex = post.dislikes.indexOf(user.data.name);
+                const dislikerIndex = post.dislikers.indexOf(user.data.name);
                 post.dislikers.splice(dislikerIndex, 1);
                 post.dislikes--;
             }
