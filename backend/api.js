@@ -232,6 +232,13 @@ function loggedinApi(req, res, user) {
             break;
         case "createpost": {
             const { title, text } = req.body;
+            if(!text||!title){
+                sendJSON({
+                    status:"error",
+                    error:"Titel und Post müssen Inhalt haben!"
+                }
+                    )
+            }
             if (text.length > 500) {
                 sendJSON({
                     status: "error",
