@@ -41,7 +41,7 @@ function frontendPostFormat(post, user) {
         dislikes: post.dislikes,
         like_state,
         comments: post.comments,
-        date:post.date
+        date: post.date
     }
 }
 function findUserLogin(loginCookie) {
@@ -200,7 +200,7 @@ function createPost(user, title, text) {
         likers: [user.data.name],
         dislikers: [],
         comments: 0,
-        date:Date.now()
+        date: Date.now()
     }
 }
 function createComment(user, text, parentID) {
@@ -214,7 +214,7 @@ function createComment(user, text, parentID) {
         likers: [user.data.name],
         dislikers: [],
         comments: 0,
-        date:Date.now()
+        date: Date.now()
     }
 }
 function loggedinApi(req, res, user) {
@@ -232,12 +232,12 @@ function loggedinApi(req, res, user) {
             break;
         case "createpost": {
             const { title, text } = req.body;
-            if(!text||!title){
+            if (!text || !title) {
                 sendJSON({
-                    status:"error",
-                    error:"Titel und Post müssen Inhalt haben!"
+                    status: "error",
+                    error: "Titel und Post müssen Inhalt haben!"
                 }
-                    )
+                )
             }
             if (text.length > 500) {
                 sendJSON({
@@ -294,12 +294,38 @@ function loggedinApi(req, res, user) {
             sendJSON({ status: "success" });
             break;
         }
-        case "getcomments":{
+        case "getcomments": {
             const commentsParent = param2;
             const commentsraw = database.getPostComments(commentsParent);
-            const commentsready = commentsraw.map(post => frontendPostFormat(post, user));
+            const commentsready = [...commentsraw.map(post => frontendPostFormat(post, user))].reverse();
             sendJSON(commentsready)
         }
+            break;
+        case "like_post":
+            res.sendStatus(200);
+            {
+                const post_id = param2;
+                const post = database.getPost(post_id);
+                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+                const isLiker = Boolean(post.likers.includes(user.data.name));
+                if (!isLiker && !isDisliker) {
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                }
+                else if(isLiker){
+                    const likerIndex = post.likers.indexOf(user.data.name);
+                    post.likers.splice(likerIndex, 1);
+                    post.likes--;
+                }
+                else if(isDisliker){
+                    const dislikerIndex = post.liker.indexOf(user.data.name);
+                    post.dislikers.splice(dislikerIndex, 1);
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                    post.dislikes--;
+                }
+                database.syncPosts();
+            }
             break;
     }
 }
