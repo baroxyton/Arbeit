@@ -213,7 +213,6 @@ function createComment(user, text, parentID) {
         dislikes: 0,
         likers: [user.data.name],
         dislikers: [],
-        likers:[],
         comments: 0,
         date: Date.now()
     }
