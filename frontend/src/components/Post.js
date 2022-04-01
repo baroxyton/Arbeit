@@ -18,12 +18,12 @@ function Post(props) {
             like_image = like_deactivated;
     }
     function like(event){
-        fetch("/fakeapi/posts/"+post.id+"/like");
+        fetch("/api/like_post/"+post.id);
         dispatch({type:"LIKE", id:post.id});
     }
     function dislike(event){
         dispatch({type:"DISLIKE", id:post.id});
-        fetch("/fakeapi/posts/"+post.id+"/dislike");
+        fetch("/api/dislike_post/"+post.id);
     }
 
     return (<div className="w-full bg-primary rounded-xl mt-3 p-3 shadow-md">
