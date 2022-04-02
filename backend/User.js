@@ -48,5 +48,9 @@ class User {
         database.addSession(store);
         return cookieValue;
     }
+    setBio(bio){
+        this.data.bio = bio;
+        this.updateDB();
+    }
 }
 module.exports = User;

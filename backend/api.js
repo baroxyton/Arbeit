@@ -431,6 +431,19 @@ function loggedinApi(req, res, user) {
             })
         }
             break;
+            case "setbio":{
+                const {bio} = req.body;
+                if(bio.length > 50||!bio){
+                    sendJSON({
+                        status:"error",
+                        error:"Zu lange"
+                    });
+                    return;
+                }
+                sendJSON({status:"success"});
+                user.setBio(bio);
+            }
+                break;
     }
 }
 module.exports = api;
