@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import NewPost from './components/NewPost.js';
 import ViewPost from './components/ViewPost';
 import Profile from './components/Profile';
+import Einstellungen from './components/Einstellungen';
 function App() {
   return (
     <div className="App">
@@ -16,6 +17,7 @@ function App() {
             <Route path="/newpost" element={<NewPost/>}></Route>
             <Route path="/post/:id" element={<ViewPost/>}></Route>
             <Route path="/profile/:user" element={<Profile/>}></Route>
+            <Route path="/einstellungen" element={<Einstellungen/>}></Route>
           </Routes>
           </Wrap>
         </Router>

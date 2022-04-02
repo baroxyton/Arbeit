@@ -1,4 +1,5 @@
 {
     "name":"Nutzername",
-    "image":"/images/default-profile.svg"
+    "image":"/images/default-profile.svg",
+    "bio":"This is my bio bro"
 }
