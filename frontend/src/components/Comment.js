@@ -1,13 +1,20 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from "react"
 import {Link} from "react-router-dom"
+import { useNavigate } from 'react-router-dom';
 function Comment(props) {
+    const navigate = useNavigate()
     const dispatch = useDispatch();
     console.log(useSelector(state=>state.currentComments), "comments");
     let post = useSelector(state => state.currentComments.list.find(comment => props.commentid == comment.id));
     function commentReply(){
+    const textarea = document.getElementById("commentArea");
+    if(!textarea){
+        navigate("/post/"+post.parentID)
+        return;
+    }
      const name = post.user.name;
-     document.getElementById("commentArea").value = `@${name}`;   
+     textarea.value = `@${name}`;   
     }
     let like_activated = "/images/like-active.svg"
     let like_deactivated = "/images/like.svg";

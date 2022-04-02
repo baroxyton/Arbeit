@@ -41,7 +41,8 @@ function frontendPostFormat(post, user) {
         dislikes: post.dislikes,
         like_state,
         comments: post.comments,
-        date: post.date
+        date: post.date,
+        parentID:post.parentID
     }
 }
 function findUserLogin(loginCookie) {
@@ -226,8 +227,11 @@ function loggedinApi(req, res, user) {
     }
     switch (param1) {
         case "user": {
-            const data = { image: user.data.image, name: user.data.name };
-            sendJSON(data);
+            sendJSON({
+                image: user.data.image,
+                name: user.data.name,
+                bio: user.data.bio
+            });
         }
             break;
         case "createpost": {
@@ -417,12 +421,12 @@ function loggedinApi(req, res, user) {
                 database.commentData.filter(post => post.user == profile)
             )
             ];
-            history.sort((a, b) => b.date - a.date);4
-            history = history.map(post=>frontendPostFormat(post,user));
+            history.sort((a, b) => b.date - a.date); 4
+            history = history.map(post => frontendPostFormat(post, user));
             sendJSON({
-                name:profileuser.data.name,
-                image:profileuser.data.image,
-                bio:profileuser.data.bio,
+                name: profileuser.data.name,
+                image: profileuser.data.image,
+                bio: profileuser.data.bio,
                 history
             })
         }

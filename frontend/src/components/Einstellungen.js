@@ -1,7 +1,30 @@
 import { Button } from "./Elements";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
+async function setBio(bio, dispatch){
+    const json = await (await fetch("/api/setbio", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+                bio
+        })
+    })).json();
+    if(json.status == "error"){
+        alert(json.error);
+        return;
+    }
+
+}
+function generateSetBio(dispatch){
+    return ()=>{
+        setBio(document.getElementById("bioInput").value, dispatch)
+    }
+}
 function Einstellungen() {
+    const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     useEffect(() => {
         document.getElementById("bioInput").value = user.bio;
@@ -17,7 +40,7 @@ function Einstellungen() {
                 <div>
                     <textarea className="resize-none bg-secondary text-accent-1 m-3" maxLength="50" id="bioInput"></textarea>
                     <br></br>
-                    <Button>Ändern</Button>
+                    <Button onClick={generateSetBio(dispatch)}>Ändern</Button>
                 </div>
                 <h1 className="text-accent-1 text-3xl text-center font-black mt-3">Passwort</h1>
                 <div>
