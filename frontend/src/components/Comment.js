@@ -39,7 +39,7 @@ function Comment(props) {
     }
 
     return (<div className="w-4/5 bg-primary rounded-xl mt-3 p-3 shadow-md">
-        <Link to={"/profile/"+post.user.name}><div className="float-left rounded-full h-12 mr-2 w-12 bg-center bg-no-repeat bg-contain shadow-sm cursor-pointer" style={{ backgroundImage: `url("${post.user.image}")` }}></div>
+        <Link to={"/profile/"+post.user.name}><div className="float-left rounded-full h-12 mr-2 w-12 bg-center bg-no-repeat bg-cover shadow-sm cursor-pointer" style={{ backgroundImage: `url("${post.user.image}")` }}></div>
         <div className="float-left text-sm text-accent-3 cursor-pointer">{post.user.name}</div></Link>
         <br></br>
         <div className="text-center text-accent-1 text-md break-all">{post.text}</div>
