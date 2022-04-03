@@ -18,8 +18,17 @@ async function setBio(bio, dispatch) {
     }
     dispatch({ type: "SETBIO", bio });
 }
-function setProfile() {
-
+function setProfile(url) {
+    fetch("/api/setpicture", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            picture: url
+        })
+    });
 }
 function generateSetBio(dispatch) {
     return () => {
@@ -41,7 +50,8 @@ function Einstellungen() {
         fr.readAsDataURL(file);
         fr.onload = () => {
             const url = fr.result;
-            dispatch({ type: "SETPROFILE", profile:url });
+            dispatch({ type: "SETPROFILE", profile: url });
+            setProfile(url);
         };
     };
     return (

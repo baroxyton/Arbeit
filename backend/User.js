@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const database = require("./database.js");
+const uploadImage = require("./uploadImage.js");
 function generateCookie(passwordHash) {
     const month = 2678400000;
     // <= 64 bytes of entropy
@@ -51,6 +52,16 @@ class User {
     setBio(bio){
         this.data.bio = bio;
         this.updateDB();
+    }
+    async updateProfilePic(base64){
+        try{
+        const answer = await uploadImage(base64, `profile-${this.data.name}`).catch(err=>0);
+        this.data.image = answer.url;
+        this.updateDB();
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 }
 module.exports = User;

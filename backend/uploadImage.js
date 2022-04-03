@@ -8,6 +8,6 @@ async function uploadImage(base64, name) {
         name
     });
     console.log(await output, "output");
-    
+    return output;
 }
 module.exports = uploadImage;

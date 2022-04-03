@@ -42,7 +42,7 @@ function frontendPostFormat(post, user) {
         like_state,
         comments: post.comments,
         date: post.date,
-        parentID:post.parentID
+        parentID: post.parentID
     }
 }
 function findUserLogin(loginCookie) {
@@ -431,19 +431,27 @@ function loggedinApi(req, res, user) {
             })
         }
             break;
-            case "setbio":{
-                const {bio} = req.body;
-                if(bio.length > 50||!bio){
-                    sendJSON({
-                        status:"error",
-                        error:"Zu lange"
-                    });
-                    return;
-                }
-                sendJSON({status:"success"});
-                user.setBio(bio);
+        case "setbio": {
+            const { bio } = req.body;
+            if (bio.length > 50 || !bio) {
+                sendJSON({
+                    status: "error",
+                    error: "Zu lange"
+                });
+                return;
             }
-                break;
+            sendJSON({ status: "success" });
+            user.setBio(bio);
+        };
+            break;
+        case "setpicture": {
+            const {picture}= req.body;
+            const base64 = picture.split(",")[1];
+            user.updateProfilePic(base64);
+            res.sendStatus(200);
+            
+        };
+            break;
     }
 }
 module.exports = api;
