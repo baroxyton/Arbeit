@@ -1,7 +1,7 @@
 import { Button } from "./Elements";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-async function setBio(bio, dispatch){
+async function setBio(bio, dispatch) {
     const json = await (await fetch("/api/setbio", {
         method: "POST",
         headers: {
@@ -9,17 +9,20 @@ async function setBio(bio, dispatch){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-                bio
+            bio
         })
     })).json();
-    if(json.status == "error"){
+    if (json.status == "error") {
         alert(json.error);
         return;
     }
+    dispatch({ type: "SETBIO", bio });
+}
+function setProfile() {
 
 }
-function generateSetBio(dispatch){
-    return ()=>{
+function generateSetBio(dispatch) {
+    return () => {
         setBio(document.getElementById("bioInput").value, dispatch)
     }
 }
@@ -31,7 +34,16 @@ function Einstellungen() {
         document.getElementById("currentProfile").style.backgroundImage = `url("${user.image}")`;
 
         console.log(user, "nutzerdaten");
-    })
+    });
+    function profileChange() {
+        const file = document.getElementById("imageUpload").files[0];
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.onload = () => {
+            const url = fr.result;
+            dispatch({ type: "SETPROFILE", profile:url });
+        };
+    };
     return (
         <div className="w-full">
             <div className="w-4/5 ml-auto p-5 mr-auto mt-5 bg-primary shadow-md rounded-md grid justify-center items-center overflow-auto">
@@ -52,7 +64,7 @@ function Einstellungen() {
                     <h1 className="text-accent-1 text-3xl text-center font-black mt-3">Profilbild</h1>
                     <div>
                         <div id="currentProfile" className="m-3 h-24 w-24 rounded-full bg-center bg-cover"></div>
-                        <input type="file" id="imageUpload" className="invisible"></input>
+                        <input type="file" id="imageUpload" className="invisible" accept="image/*" onChange={profileChange}></input>
                         <label for="imageUpload">
                             <Button>Neues Profilbild hochladen</Button>
                         </label>

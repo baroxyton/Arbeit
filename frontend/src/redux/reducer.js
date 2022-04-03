@@ -11,15 +11,19 @@ let commentInitial = {
 let userInitial = {
     image: "/images/default-profile.svg",
     name: "Loading..",
-    bio:"Loading.."
+    bio: "Loading.."
 }
 function userReducer(state = userInitial, action) {
     console.log(action, "user reducer")
     switch (action.type) {
         case "user/fetchUser/fulfilled":
             return action.payload;
-            case "SETBIO":
-                return {...state,bio:action.bio};
+        case "SETBIO":
+            return { ...state, bio: action.bio };
+            break;
+        case "SETPROFILE":
+            return { ...state, image: action.profile };
+            break;
         default:
             return state;
     }
