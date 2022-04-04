@@ -445,11 +445,39 @@ function loggedinApi(req, res, user) {
         };
             break;
         case "setpicture": {
-            const {picture}= req.body;
+            const { picture } = req.body;
             const base64 = picture.split(",")[1];
             user.updateProfilePic(base64);
             res.sendStatus(200);
-            
+
+        };
+            break;
+        case "changepassword": {
+            const { newp, old } = req.body;
+            const isCorrect = user.checkLogin(old);
+            if (!isCorrect) {
+                sendJSON({
+                    status: "error",
+                    error: "Falsches Passwort"
+                });
+                return;
+            }
+            user.changePassword(newp);
+            sendJSON({ status: "success" });
+        }
+            break;
+        case "deleteuser": {
+            const { password } = req.body;
+            const isCorrect = user.checkLogin(password);
+            if (!isCorrect) {
+                sendJSON({
+                    status: "error",
+                    error: "Falsches Passwort"
+                });
+                return;
+            }
+            user.deleteUser();
+            sendJSON({ status: "success" });
         };
             break;
     }

@@ -8,7 +8,7 @@ if (!db.get("init")) {
         users: [],
         posts: [],
         comments: [],
-        sessions:[],
+        sessions: [],
         init: true
     })
     initDB();
@@ -68,22 +68,48 @@ class Database {
     findSession(hash) {
         return this.sessionData.find(session => session.hash == hash);
     }
-    addPost(post){
+    addPost(post) {
         this.postdata.push(post);
         this.syncPosts();
     }
-    addComment(comment){
+    addComment(comment) {
         this.commentData.push(comment);
         this.syncComments();
     }
-    getPost(id){
-        return this.postdata.find(post=>post.id==id);
+    getPost(id) {
+        return this.postdata.find(post => post.id == id);
     }
-    getComment(id){
-        return this.commentData.find(post=>post.id==id);
+    getComment(id) {
+        return this.commentData.find(post => post.id == id);
     }
-    getPostComments(id){
-        return this.commentData.filter(comment=>comment.parentID==id);
+    getPostComments(id) {
+        return this.commentData.filter(comment => comment.parentID == id);
+    }
+    getCommentsByUser(user) {
+        return this.commentData.filter(comment => comment.user == user);
+    }
+    deleteComment(id) {
+        const index = this.commentData.findIndex(comment => comment.id == id);
+        this.commentData.splice(index, 1);
+        this.syncComments();
+    }
+    deletePost(id) {
+        const index = this.postdata.findIndex(post => post.id == id);
+        this.postdata.splice(index, 1);
+        this.syncPosts();
+        const comments = this.getPostComments(id);
+        comments.forEach(comment => this.deleteComment(comment.id));
+    }
+    deleteUser(name){
+        const index = this.userdata.findIndex(user => user.name == name);
+        this.userdata.splice(index, 1);
+        this.syncUsers();
+        const posts = this.getPostsByUser(name);
+        posts.forEach(post => this.deletePost(post.id));
+        const comments = this.getCommentsByUser(name);
+        comments.forEach(comment => this.deleteComment(comment.id));
+        this.syncComments();
+        this.syncPosts();
     }
 }
 const database = new Database();

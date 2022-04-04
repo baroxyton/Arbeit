@@ -63,5 +63,16 @@ class User {
             console.log(err);
         }
     }
+    changePassword(password){
+        this.data.password = createPasswordHash(this.data.name, password);
+        this.updateDB();
+    }
+    deleteUser(){
+        database.deleteUser(this.data.name);
+        const userPosts = database.getPostsByUser(this.data.name);
+        const userComments = database.getCommentsByUser(this.data.name);
+        userPosts.forEach(post => database.deletePost(post.id));
+        userComments.forEach(comment => database.deleteComment(comment.id));
+    }
 }
 module.exports = User;
