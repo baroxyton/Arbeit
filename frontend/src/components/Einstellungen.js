@@ -48,6 +48,9 @@ async function changePassword() {
         alert(json.error);
         return;
     }
+};
+async function requestUserData(){
+    window.location = "/api/requestuserdata"
 }
 async function deleteUser() {
     const agree = prompt("Bist du sicher, dass du deinen Account löschen möchtest? Gib dein Passwort ein, um fortzufahren.");
@@ -124,7 +127,7 @@ function Einstellungen() {
                         <Button onClick={deleteUser}>Account Löschen</Button>
                         <br></br>
                         <br></br>
-                        <Button>Gespeicherte Daten beantragen</Button>
+                        <Button onClick={requestUserData}>Gespeicherte Daten beantragen</Button>
                     </div>
                 </div>
             </div>
