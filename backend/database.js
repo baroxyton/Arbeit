@@ -46,7 +46,8 @@ class Database {
         this.syncSessions();
     }
     findUserIndex(name) {
-        return this.userdata.findIndex(user => user.name == name);
+        const userlowercase = name.toLowerCase();
+        return this.userdata.findIndex(user=> user.name.toLowerCase() == userlowercase);
     }
     findUser(name) {
         return this.userdata[this.findUserIndex(name)]
