@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const database = require("./database.js");
 const uploadImage = require("./uploadImage.js");
-function generateCookie(passwordHash) {
+function generateCookie() {
     const month = 2678400000;
     // <= 64 bytes of entropy
     const randomString = crypto.randomBytes(64).toString('hex');

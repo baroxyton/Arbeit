@@ -59,6 +59,16 @@ function findUserLogin(loginCookie) {
     }
     return session;
 }
+function JSONToHTML(json) {
+    let html = "";
+    for (prop in json) {
+        html += `<h1>${prop}</h1>
+        <br>
+        <a>${JSON.stringify(json[prop])}</a>
+        <br>`;
+    }
+    return html;
+}
 function api(req, res) {
     const loginCookie = req.cookies.login;
     const account = findUserLogin(loginCookie);
@@ -479,6 +489,15 @@ function loggedinApi(req, res, user) {
             user.deleteUser();
             sendJSON({ status: "success" });
         };
+            break;
+        case "requestuserdata": {
+            const userdata = user.data;
+            const usercomments = database.getCommentsByUser(user.data.name);
+            const userposts = database.getPostsByUser(user.data.name);
+            const userSessions = database.getSessionsByUser(user.data.name);
+            const json = { nutzer: userdata, posts: userposts, kommentare: usercomments, sitzungen: userSessions };
+            res.send(JSONToHTML(json));
+        }
             break;
     }
 }
