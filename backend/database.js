@@ -99,8 +99,20 @@ class Database {
         this.syncPosts();
         const comments = this.getPostComments(id);
         comments.forEach(comment => this.deleteComment(comment.id));
+        this.syncPosts();
     }
-    deleteUser(name){
+    getPostsByUser(name) {
+        return this.postdata.filter(post => post.user == name);
+    }
+    getSessionsByUser(name) {
+        return this.sessionData.filter(session => session.name == name);
+    }
+    deleteSession(hash) {
+        const index = this.sessionData.findIndex(session => session.hash == hash);
+        this.sessionData.splice(index, 1);
+        this.syncSessions();
+    }
+    deleteUser(name) {
         const index = this.userdata.findIndex(user => user.name == name);
         this.userdata.splice(index, 1);
         this.syncUsers();
@@ -108,8 +120,8 @@ class Database {
         posts.forEach(post => this.deletePost(post.id));
         const comments = this.getCommentsByUser(name);
         comments.forEach(comment => this.deleteComment(comment.id));
-        this.syncComments();
-        this.syncPosts();
+        const sessions = this.getSessionsByUser(name);
+        sessions.forEach(session => this.deleteSession(session.hash));
     }
 }
 const database = new Database();
