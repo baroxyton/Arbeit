@@ -69,6 +69,7 @@ function JSONToHTML(json) {
     }
     return html;
 }
+// Root API
 function api(req, res) {
     const loginCookie = req.cookies.login;
     const account = findUserLogin(loginCookie);
@@ -79,8 +80,13 @@ function api(req, res) {
     const user = new User();
     user.loadUser(account.name);
     loggedinApi(req, res, user);
+    if (!user.data.banned) {
+        unbannedApi(req, res, user);
+    }
 }
 
+// API for guest
+// Login, registration, captcha
 function loggedoutApi(req, res) {
     const param1 = req.params.endpoint;
     const param2 = req.params.endpoint2;
@@ -228,6 +234,8 @@ function createComment(user, text, parentID) {
         date: Date.now()
     }
 }
+// API for logged in users (Possibly banned)
+// View anything, only change own data
 function loggedinApi(req, res, user) {
     const param1 = req.params.endpoint;
     const param2 = req.params.endpoint2;
@@ -240,41 +248,12 @@ function loggedinApi(req, res, user) {
             sendJSON({
                 image: user.data.image,
                 name: user.data.name,
-                bio: user.data.bio
+                bio: user.data.bio,
+                roles: user.data.roles
             });
         }
             break;
-        case "createpost": {
-            const { title, text } = req.body;
-            if (!text || !title) {
-                sendJSON({
-                    status: "error",
-                    error: "Titel und Post müssen Inhalt haben!"
-                }
-                )
-            }
-            if (text.length > 500) {
-                sendJSON({
-                    status: "error",
-                    error: "Post zu lang"
-                });
-                return;
-            }
-            if (title.length > 20) {
-                sendJSON({
-                    status: "error",
-                    error: "Titel zu lang"
-                });
-                return;
-            }
-            const post = createPost(user, filter.clean(title), filter.clean(text));
-            database.addPost(post);
-            sendJSON({
-                status: "success",
-                location: "/post/" + post.id
-            });
-        }
-            break;
+
         case "posts": {
             const page = req.query.page;
             const posts = database.postdata.map(post => frontendPostFormat(post, user));
@@ -286,28 +265,6 @@ function loggedinApi(req, res, user) {
             sendJSON(frontendPostFormat(database.postdata[post], user));
         }
             break;
-        case "createcomment": {
-            const { text, parentID } = req.body;
-            if (!database.getPost(parentID)) {
-                sendJSON({
-                    status: "error",
-                    error: "Post nicht gefunden"
-                });
-            }
-            if (text.length > 200) {
-                sendJSON({
-                    status: "error",
-                    error: "Kommentar zu lang"
-                });
-                return;
-            }
-            const comment = createComment(user, filter.clean(text), parentID);
-            database.addComment(comment);
-            database.getPost(comment.parentID).comments++;
-            database.syncPosts();
-            sendJSON({ status: "success" });
-            break;
-        }
         case "getcomments": {
             const commentsParent = param2;
             const commentsraw = database.getPostComments(commentsParent);
@@ -315,111 +272,7 @@ function loggedinApi(req, res, user) {
             sendJSON(commentsready)
         }
             break;
-        case "like_post":
-            {
-                res.sendStatus(200);
-                const post_id = param2;
-                const post = database.getPost(post_id);
-                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-                const isLiker = Boolean(post.likers.includes(user.data.name));
-                if (!isLiker && !isDisliker) {
-                    post.likers.push(user.data.name);
-                    post.likes++;
-                }
-                else if (isLiker) {
-                    const likerIndex = post.likers.indexOf(user.data.name);
-                    post.likers.splice(likerIndex, 1);
-                    post.likes--;
-                }
-                else if (isDisliker) {
-                    const dislikerIndex = post.dislikers.indexOf(user.data.name);
-                    post.dislikers.splice(dislikerIndex, 1);
-                    post.likers.push(user.data.name);
-                    post.likes++;
-                    post.dislikes--;
-                }
-                database.syncPosts();
-            }
-            break;
-        case "dislike_post": {
-            res.sendStatus(200);
-            const post_id = param2;
-            const post = database.getPost(post_id);
-            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-            const isLiker = Boolean(post.likers.includes(user.data.name));
-            if (!isLiker && !isDisliker) {
-                post.dislikers.push(user.data.name);
-                post.dislikes++;
-            }
-            else if (isDisliker) {
-                const dislikerIndex = post.dislikers.indexOf(user.data.name);
-                post.dislikers.splice(dislikerIndex, 1);
-                post.dislikes--;
-            }
-            else if (isLiker) {
-                const likerIndex = post.likers.indexOf(user.data.name);
-                post.likers.splice(likerIndex, 1);
-                post.dislikers.push(user.data.name);
-                post.dislikes++;
-                post.likes--;
-            }
-            database.syncPosts();
-        }
 
-            break;
-        case "like_comment":
-            {
-                res.sendStatus(200);
-                const post_id = param2;
-                const post = database.getComment(post_id);
-                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-                const isLiker = Boolean(post.likers.includes(user.data.name));
-                if (!isLiker && !isDisliker) {
-                    post.likers.push(user.data.name);
-                    post.likes++;
-                }
-                else if (isLiker) {
-                    const likerIndex = post.likers.indexOf(user.data.name);
-                    post.likers.splice(likerIndex, 1);
-                    post.likes--;
-                }
-                else if (isDisliker) {
-                    const dislikerIndex = post.dislikers.indexOf(user.data.name);
-                    post.dislikers.splice(dislikerIndex, 1);
-                    post.likers.push(user.data.name);
-                    post.likes++;
-                    post.dislikes--;
-                }
-                database.syncComments();
-            }
-            break;
-        case "dislike_comment": {
-            res.sendStatus(200);
-            const post_id = param2;
-            const post = database.getComment(post_id);
-            console.log({ post, post_id }, "comment found?")
-            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
-            const isLiker = Boolean(post.likers.includes(user.data.name));
-            if (!isLiker && !isDisliker) {
-                post.dislikers.push(user.data.name);
-                post.dislikes++;
-            }
-            else if (isDisliker) {
-                const dislikerIndex = post.dislikers.indexOf(user.data.name);
-                post.dislikers.splice(dislikerIndex, 1);
-                post.dislikes--;
-            }
-            else if (isLiker) {
-                const likerIndex = post.likers.indexOf(user.data.name);
-                post.likers.splice(likerIndex, 1);
-                post.dislikers.push(user.data.name);
-                post.dislikes++;
-                post.likes--;
-            }
-            database.syncComments();
-        }
-
-            break;
         case "getprofile": {
             const profile = param2;
             const profileuser = new User();
@@ -524,6 +377,174 @@ function loggedinApi(req, res, user) {
                 return;
             }
             database.deleteComment(comment_id);
+            sendJSON({ status: "success" });
+        }
+            break;
+    }
+}
+// Unbanned, logged in user API
+// View anything, interact
+function unbannedApi(req, res, user) {
+    const param1 = req.params.endpoint;
+    const param2 = req.params.endpoint2;
+    const param3 = req.params.endpoint3;
+    function sendJSON(json) {
+        res.send(JSON.stringify(json));
+    }
+    switch (param1) {
+        case "createpost": {
+            const { title, text } = req.body;
+            if (!text || !title) {
+                sendJSON({
+                    status: "error",
+                    error: "Titel und Post müssen Inhalt haben!"
+                }
+                )
+            }
+            if (text.length > 500) {
+                sendJSON({
+                    status: "error",
+                    error: "Post zu lang"
+                });
+                return;
+            }
+            if (title.length > 20) {
+                sendJSON({
+                    status: "error",
+                    error: "Titel zu lang"
+                });
+                return;
+            }
+            const post = createPost(user, filter.clean(title), filter.clean(text));
+            database.addPost(post);
+            sendJSON({
+                status: "success",
+                location: "/post/" + post.id
+            });
+        }
+            break;
+        case "like_comment":
+            {
+                res.sendStatus(200);
+                const post_id = param2;
+                const post = database.getComment(post_id);
+                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+                const isLiker = Boolean(post.likers.includes(user.data.name));
+                if (!isLiker && !isDisliker) {
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                }
+                else if (isLiker) {
+                    const likerIndex = post.likers.indexOf(user.data.name);
+                    post.likers.splice(likerIndex, 1);
+                    post.likes--;
+                }
+                else if (isDisliker) {
+                    const dislikerIndex = post.dislikers.indexOf(user.data.name);
+                    post.dislikers.splice(dislikerIndex, 1);
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                    post.dislikes--;
+                }
+                database.syncComments();
+            }
+            break;
+        case "dislike_comment": {
+            res.sendStatus(200);
+            const post_id = param2;
+            const post = database.getComment(post_id);
+            console.log({ post, post_id }, "comment found?")
+            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+            const isLiker = Boolean(post.likers.includes(user.data.name));
+            if (!isLiker && !isDisliker) {
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+            }
+            else if (isDisliker) {
+                const dislikerIndex = post.dislikers.indexOf(user.data.name);
+                post.dislikers.splice(dislikerIndex, 1);
+                post.dislikes--;
+            }
+            else if (isLiker) {
+                const likerIndex = post.likers.indexOf(user.data.name);
+                post.likers.splice(likerIndex, 1);
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+                post.likes--;
+            }
+            database.syncComments();
+        }
+            break;
+        case "like_post":
+            {
+                res.sendStatus(200);
+                const post_id = param2;
+                const post = database.getPost(post_id);
+                const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+                const isLiker = Boolean(post.likers.includes(user.data.name));
+                if (!isLiker && !isDisliker) {
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                }
+                else if (isLiker) {
+                    const likerIndex = post.likers.indexOf(user.data.name);
+                    post.likers.splice(likerIndex, 1);
+                    post.likes--;
+                }
+                else if (isDisliker) {
+                    const dislikerIndex = post.dislikers.indexOf(user.data.name);
+                    post.dislikers.splice(dislikerIndex, 1);
+                    post.likers.push(user.data.name);
+                    post.likes++;
+                    post.dislikes--;
+                }
+                database.syncPosts();
+            }
+            break;
+        case "dislike_post": {
+            res.sendStatus(200);
+            const post_id = param2;
+            const post = database.getPost(post_id);
+            const isDisliker = Boolean(post.dislikers.includes(user.data.name));
+            const isLiker = Boolean(post.likers.includes(user.data.name));
+            if (!isLiker && !isDisliker) {
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+            }
+            else if (isDisliker) {
+                const dislikerIndex = post.dislikers.indexOf(user.data.name);
+                post.dislikers.splice(dislikerIndex, 1);
+                post.dislikes--;
+            }
+            else if (isLiker) {
+                const likerIndex = post.likers.indexOf(user.data.name);
+                post.likers.splice(likerIndex, 1);
+                post.dislikers.push(user.data.name);
+                post.dislikes++;
+                post.likes--;
+            }
+            database.syncPosts();
+        }
+            break;
+        case "createcomment": {
+            const { text, parentID } = req.body;
+            if (!database.getPost(parentID)) {
+                sendJSON({
+                    status: "error",
+                    error: "Post nicht gefunden"
+                });
+            }
+            if (text.length > 200) {
+                sendJSON({
+                    status: "error",
+                    error: "Kommentar zu lang"
+                });
+                return;
+            }
+            const comment = createComment(user, filter.clean(text), parentID);
+            database.addComment(comment);
+            database.getPost(comment.parentID).comments++;
+            database.syncPosts();
             sendJSON({ status: "success" });
         }
             break;

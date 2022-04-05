@@ -23,7 +23,9 @@ function newUser(username, password) {
         name: username,
         password: createPasswordHash(username, password),
         roles: ["user"],
-        image: "/images/default-profile.svg"
+        image: "/images/default-profile.svg",
+        banned:false,
+        bio: ""
     }
 }
 class User {
