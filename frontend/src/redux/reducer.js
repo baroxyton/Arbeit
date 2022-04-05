@@ -11,7 +11,8 @@ let commentInitial = {
 let userInitial = {
     image: "/images/default-profile.svg",
     name: "Loading..",
-    bio: "Loading.."
+    bio: "Loading..",
+    roles:[]
 }
 function userReducer(state = userInitial, action) {
     console.log(action, "user reducer")

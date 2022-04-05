@@ -7,6 +7,7 @@ import NewPost from './components/NewPost.js';
 import ViewPost from './components/ViewPost';
 import Profile from './components/Profile';
 import Einstellungen from './components/Einstellungen';
+import AdminMenu from './components/AdminMenu';
 function App() {
   return (
     <div className="App">
@@ -18,6 +19,7 @@ function App() {
             <Route path="/post/:id" element={<ViewPost/>}></Route>
             <Route path="/profile/:user" element={<Profile/>}></Route>
             <Route path="/einstellungen" element={<Einstellungen/>}></Route>
+            <Route path="/admin" element={<AdminMenu/>}></Route>
           </Routes>
           </Wrap>
         </Router>
