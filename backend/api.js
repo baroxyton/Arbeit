@@ -83,6 +83,9 @@ function api(req, res) {
     if (!user.data.banned) {
         unbannedApi(req, res, user);
     }
+    if(user.data.roles.includes("admin")){
+        adminApi(req, res, user);
+    }
 }
 
 // API for guest
@@ -547,6 +550,100 @@ function unbannedApi(req, res, user) {
             database.syncPosts();
             sendJSON({ status: "success" });
         }
+            break;
+    }
+}
+function adminApi(req, res, user) {
+    const param1 = req.params.endpoint;
+    const param2 = req.params.endpoint2;
+    const param3 = req.params.endpoint3;
+    function sendJSON(json) {
+        res.send(JSON.stringify(json));
+    }
+    switch (param1) {
+        case "ban_user":
+            {
+                console.log("banning user", param2);
+                const username = param2;
+                const banUser = new User();
+                banUser.loadUser(username);
+                if (!banUser.data.name) {
+                    sendJSON({
+                        status: "error",
+                        error: "Nutzer nicht gefunden"
+                    });
+                    return;
+                }
+                banUser.data.banned = true;
+                database.syncUsers();
+                sendJSON({ status: "success" });
+            }
+            break;
+        case "unban_user":
+            {
+                const username = param2;
+                const banUser = new User();
+                banUser.loadUser(username);
+                if (!banUser.data.name) {
+                    sendJSON({
+                        status: "error",
+                        error: "Nutzer nicht gefunden"
+                    });
+                    return;
+                }
+                banUser.data.banned = false;
+                database.syncUsers();
+                sendJSON({ status: "success" });
+            }
+            break;
+        case "delete_post_admin":
+            {
+                const post_id = param2;
+                const post = database.getPost(post_id);
+                if (!post) {
+                    sendJSON({
+                        status: "error",
+                        error: "Post nicht gefunden"
+                    });
+                    return;
+                }
+                database.deletePost(post_id);
+                database.syncPosts();
+                sendJSON({ status: "success" });
+            }
+            break;
+        case "delete_comment_admin":
+            {
+                const comment_id = param2;
+                const comment = database.getComment(comment_id);
+                if (!comment) {
+                    sendJSON({
+                        status: "error",
+                        error: "Kommentar nicht gefunden"
+                    });
+                    return;
+                }
+                database.deleteComment(comment_id);
+                database.syncComments();
+                sendJSON({ status: "success" });
+            }
+            break;
+        case "add_admin":
+            {
+                const username = param2;
+                const newAdmin = new User();
+                newAdmin.loadUser(username);
+                if (!newAdmin.data.name) {
+                    sendJSON({
+                        status: "error",
+                        error: "Nutzer nicht gefunden"
+                    });
+                    return;
+                }
+                newAdmin.data.roles.push("admin");
+                database.syncUsers();
+                sendJSON({ status: "success" });
+            }
             break;
     }
 }
