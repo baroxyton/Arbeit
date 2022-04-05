@@ -9,7 +9,6 @@
   "author": "baroxyton",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.26.1",
     "bad-words": "^3.0.4",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.3",
