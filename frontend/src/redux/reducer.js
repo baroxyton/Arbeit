@@ -167,6 +167,11 @@ function postReducer(state = postInitial, action) {
             stateClone.list[postIndex] = post;
             return stateClone;
             break;
+        case "DELETE_POST":
+            id = action.id;
+            postIndex = state.list.findIndex(post => post.id == id);
+            stateClone.list.splice(postIndex, 1);
+            return stateClone;
         default:
             return state;
     }
