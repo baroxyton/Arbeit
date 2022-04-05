@@ -499,6 +499,34 @@ function loggedinApi(req, res, user) {
             res.send(JSONToHTML(json));
         }
             break;
+        case "delete_post": {
+            const post_id = param2;
+            const post = database.getPost(post_id);
+            if (post.user != user.data.name) {
+                sendJSON({
+                    status: "error",
+                    error: "Du bist nicht der Ersteller dieses Posts"
+                });
+                return;
+            }
+            database.deletePost(post_id);
+            sendJSON({ status: "success" });
+        }
+            break;
+        case "delete_comment": {
+            const comment_id = param2;
+            const comment = database.getComment(comment_id);
+            if (comment.user != user.data.name) {
+                sendJSON({
+                    status: "error",
+                    error: "Du bist nicht der Ersteller dieses Kommentars"
+                });
+                return;
+            }
+            database.deleteComment(comment_id);
+            sendJSON({ status: "success" });
+        }
+            break;
     }
 }
 module.exports = api;

@@ -47,7 +47,7 @@ class Database {
     }
     findUserIndex(name) {
         const userlowercase = name.toLowerCase();
-        return this.userdata.findIndex(user=> user.name.toLowerCase() == userlowercase);
+        return this.userdata.findIndex(user => user.name.toLowerCase() == userlowercase);
     }
     findUser(name) {
         return this.userdata[this.findUserIndex(name)]
@@ -91,8 +91,13 @@ class Database {
     }
     deleteComment(id) {
         const index = this.commentData.findIndex(comment => comment.id == id);
-        this.commentData.splice(index, 1);
         this.syncComments();
+        const parentPost = this.getPost(this.getComment(id).parentID);
+        if (parentPost) {
+            parentPost.comments--;
+            this.syncPosts();
+        }
+        this.commentData.splice(index, 1);
     }
     deletePost(id) {
         const index = this.postdata.findIndex(post => post.id == id);

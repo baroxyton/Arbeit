@@ -94,6 +94,12 @@ function commentReducer(state = commentInitial, action) {
             stateClone.list.unshift(action.data);
             return stateClone;
             break;
+        case "DELETE_COMMENT":
+            id = action.id;
+            postIndex = state.list.findIndex(post => post.id == id);
+            stateClone.list.splice(postIndex, 1);
+            return stateClone;
+            break;
         default:
             return state;
     }
