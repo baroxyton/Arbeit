@@ -59,6 +59,32 @@ function findUserLogin(loginCookie) {
     }
     return session;
 }
+function createNotification(user, text, link) {
+    const dbuser = new User();
+    dbuser.loadUser(user);
+    dbuser.data.unreadNotifications++;
+    return {
+        id: database.notificationData.length,
+        text,
+        user,
+        date: Date.now(),
+        link
+    }
+}
+function pingUsers(text, link) {
+    const mentions = text.match(/@[a-zA-Z]([a-zA-Z\-_0-9]){1,20}/g);
+    if (!mentions) {
+        return;
+    }
+    mentions.forEach(mention => {
+        const user = new User();
+        user.loadUser(mention.slice(1));
+        if (user.data.name) {
+            database.notificationData.push(createNotification(user.data.name, `${user.data.name} hat dich in einem Post erwähnt`, link));
+
+        }
+    });
+}
 function JSONToHTML(json) {
     let html = "";
     for (prop in json) {
@@ -83,7 +109,7 @@ function api(req, res) {
     if (!user.data.banned) {
         unbannedApi(req, res, user);
     }
-    if(user.data.roles.includes("admin")){
+    if (user.data.roles.includes("admin")) {
         adminApi(req, res, user);
     }
 }
@@ -383,6 +409,31 @@ function loggedinApi(req, res, user) {
             sendJSON({ status: "success" });
         }
             break;
+        case "get_notifications":
+            {
+                const notifications = [...database.getNotifications(user.data.name)].slice(-10);
+                sendJSON(notifications);
+            }
+            break;
+        case "notifimage_generator":
+            {
+                const notification_count = param2;
+                res.setHeader('Content-Type', 'image/svg+xml');
+                res.send(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                    <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" id="Capa_1" x="0px" y="0px" width="510px" height="510px" viewBox="0 0 510 510" style="enable-background:new 0 0 510 510;" xml:space="preserve" >
+                    
+                    <g id="g3" fill="#5C6F68" transform="matrix(0.87658593,0,0,0.87658593,31.470588,31.470588)"><g id="notifications"><path d="m 255,510 c 28.05,0 51,-22.95 51,-51 l -102,0 c 0,28.05 22.95,51 51,51 z m 165.75,-153 0,-140.25 C 420.75,137.7 367.2,73.95 293.25,56.1 l 0,-17.85 C 293.25,17.85 275.4,0 255,0 234.6,0 216.75,17.85 216.75,38.25 l 0,17.85 C 142.8,73.95 89.25,137.7 89.25,216.75 l 0,140.25 -51,51 0,25.5 433.5,0 0,-25.5 -51,-51 z" id="path6" inkscape:connector-curvature="0"/></g></g><g id="g8"/><g id="g10"/><g id="g12"/><g id="g14"/><g id="g16"/><g id="g18"/><g id="g20"/><g id="g22"/><g id="g24"/><g id="g26"/><g id="g28"/><g id="g30"/><g id="g32"/><g id="g34"/><g id="g36"/>
+                    
+                    <circle cx="130" cy="100" r="100" fill="#A7FFF6" />
+                    <text x="140" y="130" 
+                              text-anchor="middle"
+                                stroke="#8AA39B"
+                                fill="#8AA39B"
+                                stroke-width="10px"
+                                font-size="150px"
+                              alignment-baseline="middle"> ${notification_count} </text>
+                    </svg>`);
+            }
     }
 }
 // Unbanned, logged in user API
@@ -424,6 +475,7 @@ function unbannedApi(req, res, user) {
                 status: "success",
                 location: "/post/" + post.id
             });
+            pingUsers(text, `/post/${post.id}`);
         }
             break;
         case "like_comment":
@@ -548,6 +600,15 @@ function unbannedApi(req, res, user) {
             database.addComment(comment);
             database.getPost(comment.parentID).comments++;
             database.syncPosts();
+
+            const parentPost = database.getPost(comment.parentID);
+            const parentPoster = parentPost.user;
+            database.notificationData.push(createNotification(parentPoster,
+                `${user.data.name} hat einen Kommentar auf deinem Post hinterlassen`,
+                `/post/${comment.parentID}`));
+            pingUsers(text, `/post/${comment.parentID}`);
+            database.syncNotifications();
+
             sendJSON({ status: "success" });
         }
             break;

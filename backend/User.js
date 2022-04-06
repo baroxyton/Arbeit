@@ -25,7 +25,8 @@ function newUser(username, password) {
         roles: ["user"],
         image: "/images/default-profile.svg",
         banned:false,
-        bio: ""
+        bio: "",
+        unreadNotifications: 0
     }
 }
 class User {

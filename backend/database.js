@@ -9,6 +9,7 @@ if (!db.get("init")) {
         posts: [],
         comments: [],
         sessions: [],
+        notifications: [],
         init: true
     })
     initDB();
@@ -19,6 +20,7 @@ class Database {
         this.postdata = db.get("posts");
         this.commentData = db.get("comments");
         this.sessionData = db.get("sessions");
+        this.notificationData = db.get("notifications");
     }
     syncDB() {
         db.sync();
@@ -39,11 +41,16 @@ class Database {
         db.set("comments", this.commentData);
         this.syncDB();
     }
+    syncNotifications(){
+        db.set("notifications", this.notificationData);
+        this.syncDB();
+    }
     sync() {
         this.syncUsers();
         this.syncPosts();
         this.syncComments();
         this.syncSessions();
+        this.syncNotifications();
     }
     findUserIndex(name) {
         const userlowercase = name.toLowerCase();
@@ -128,6 +135,9 @@ class Database {
         comments.forEach(comment => this.deleteComment(comment.id));
         const sessions = this.getSessionsByUser(name);
         sessions.forEach(session => this.deleteSession(session.hash));
+    }
+    getNotifications(name){
+        return this.notificationData.filter(notification => notification.user == name);
     }
 }
 const database = new Database();
