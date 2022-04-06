@@ -62,7 +62,7 @@ function Comment(props) {
             {(
                 post.user.name == user.name ? <div onClick={deleteComment} className="h-12 w-12 bg-top-left bg-contain bg-no-repeat m-3 dislike cursor-pointer" style={{ "backgroundImage": "url('/images/trash.svg')" }}></div> : ""
             )}
-            <div className="self-center justify-self-end ml-auto text-accent-3">{new Date(post.date).toLocaleString()}</div>
+            <div className="self-center justify-self-end ml-auto text-accent-3">{post.date}</div>
         </div>
     </div>)
 }
