@@ -9,7 +9,11 @@ import { Link } from "react-router-dom";
 const fetchUserData = createAsyncThunk("user/fetchUser", async (id) => {
     return await (await fetch("/api/user")).json();
 });
+function notificationsRead(){
+    fetch("/api/read_notifications");
+}
 function notificationMenu(event) {
+    notificationsRead();
     document.getElementById("overlay-notifications").style.display = "block";
     const rect = event.target.getBoundingClientRect();
     document.getElementById("menu-notifications").style.top = "3rem";
