@@ -18,6 +18,38 @@ function checkCaptcha(id, answer) {
     }
     return isCorrect;
 }
+// Date to time difference (e.g "vor 1 Stunde")
+function dateToDiff(date) {
+    const currentDate = new Date().getTime();
+    const msDiff = currentDate - date;
+    let string = "";
+    if (msDiff < 1000) {
+        string = "vor einer Sekunde";
+    }
+    else if (msDiff < 60000) {
+        string = "vor " + Math.floor(msDiff / 1000) + " Sekunden";
+    }
+    else if (msDiff < 3600000) {
+        string = "vor " + Math.floor(msDiff / 60000) + " Minuten";
+    }
+    else if (msDiff < 86400000) {
+        string = "vor " + Math.floor(msDiff / 3600000) + " Stunden";
+    }
+    else if (msDiff < 604800000) {
+        string = "vor " + Math.floor(msDiff / 86400000) + " Tagen";
+    }
+    else if (msDiff < 2419200000) {
+        string = "vor " + Math.floor(msDiff / 604800000) + " Wochen";
+    }
+    else if (msDiff < 31536000000) {
+        string = "vor " + Math.floor(msDiff / 2419200000) + " Monaten";
+    }
+    else {
+        string = "vor " + Math.floor(msDiff / 31536000000) + " Jahren";
+    }
+    return string;
+}
+
 // Send post without sensitive information
 function frontendPostFormat(post, user) {
     console.log({ post, }, "post");
@@ -41,7 +73,7 @@ function frontendPostFormat(post, user) {
         dislikes: post.dislikes,
         like_state,
         comments: post.comments,
-        date: post.date,
+        date: dateToDiff(post.date),
         parentID: post.parentID
     }
 }
