@@ -41,7 +41,7 @@ class Database {
         db.set("comments", this.commentData);
         this.syncDB();
     }
-    syncNotifications(){
+    syncNotifications() {
         db.set("notifications", this.notificationData);
         this.syncDB();
     }
@@ -135,8 +135,15 @@ class Database {
         comments.forEach(comment => this.deleteComment(comment.id));
         const sessions = this.getSessionsByUser(name);
         sessions.forEach(session => this.deleteSession(session.hash));
+        const notifications = this.getNotifications(name);
+        notifications.forEach(notification => this.deleteNotification(notification.id));
     }
-    getNotifications(name){
+    deleteNotification(id) {
+        const index = this.notificationData.findIndex(notification => notification.id == id);
+        this.notificationData.splice(index, 1);
+        this.syncNotifications();
+    }
+    getNotifications(name) {
         return this.notificationData.filter(notification => notification.user == name);
     }
 }

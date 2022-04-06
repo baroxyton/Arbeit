@@ -475,6 +475,7 @@ function loggedinApi(req, res, user) {
             break;
         case "read_notifications": {
             user.data.unreadNotifications = 0;
+            database.syncUsers();
             res.sendStatus(200);
         }
             break;

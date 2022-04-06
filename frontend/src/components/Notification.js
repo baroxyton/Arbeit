@@ -4,7 +4,11 @@ function Notification(props){
     const notifications = useSelector(state => state.notifications);
     useEffect(() => {
         (async function(){
-        const notif_count = await (await fetch("/api/unread_notification_count")).text();
+        const notif_count = Number(await (await fetch("/api/unread_notification_count")).text());
+        if(notif_count === 0){
+            document.getElementById("notificationIcon").style.backgroundImage = "url('/images/notification-none.svg')";
+            return
+        }
         document.getElementById("notificationIcon").style.backgroundImage = `url('/api/notifimage_generator/${notif_count}')`;
         })()
     }, [notifications]);
