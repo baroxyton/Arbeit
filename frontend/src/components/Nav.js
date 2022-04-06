@@ -4,6 +4,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Button } from './Elements.js'
 import Notification from './Notification.js';
 import Menu from './Menu.js';
+import NotificationItem from "./NotificationItem.js";
 import { Link } from "react-router-dom";
 const fetchUserData = createAsyncThunk("user/fetchUser", async (id) => {
     return await (await fetch("/api/user")).json();
@@ -37,7 +38,18 @@ function Nav() {
                 <div className="m-3 h-12 w-12 rounded-full bg-center bg-cover" onClick={navMenu} style={{ backgroundImage:`url('${user.image}')` }}></div>
                 <Link to={"/profile/" + user.name}><div className="m-5 m-left:10 text-accent-1 text-xl font-black">{user.name}</div></Link>
             </div>
-            <Menu name="notifications" style={{ transform: "translate(-50%)" }}></Menu>
+            <Menu name="notifications" style={{ transform: "translate(-50%)" }}>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="lulz xd" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            </Menu>
             <Menu name="navmenu">
                 <div className="h-full w-full grid justify-center items-center">
                 <Link to="/" className="text-xl text-accent-2">Startseite</Link>
