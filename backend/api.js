@@ -466,6 +466,12 @@ function loggedinApi(req, res, user) {
                               alignment-baseline="middle"> ${notification_count} </text>
                     </svg>`);
             }
+            break;
+            case "unread_notification_count":
+                {
+                    const count = user.data.unreadNotifications;
+                    res.send(`${count}`);
+                }
     }
 }
 // Unbanned, logged in user API

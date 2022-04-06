@@ -12,10 +12,23 @@ let userInitial = {
     image: "/images/default-profile.svg",
     name: "Loading..",
     bio: "Loading..",
-    roles:[]
+    roles: []
+}
+let notificationInitial = {
+    list: []
+}
+function notificationReducer(state = notificationInitial, action) {
+    const stateClone = JSON.parse(JSON.stringify(state));
+    switch (action.type) {
+        case "LOAD_NOTIFS":
+            stateClone.list = action.notifs;
+            return stateClone;
+            break;
+        default:
+            return state;
+    }
 }
 function userReducer(state = userInitial, action) {
-    console.log(action, "user reducer")
     switch (action.type) {
         case "user/fetchUser/fulfilled":
             return action.payload;
@@ -30,7 +43,6 @@ function userReducer(state = userInitial, action) {
     }
 }
 function commentReducer(state = commentInitial, action) {
-    console.log(state, "comment reducer")
     let stateClone = JSON.parse(JSON.stringify(state));
     let id, post, postIndex;
     switch (action.type) {
@@ -183,6 +195,6 @@ function postReducer(state = postInitial, action) {
             return state;
     }
 }
-const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer, user: userReducer });
+const reducer = combineReducers({ posts: postReducer, currentComments: commentReducer, user: userReducer, notifications: notificationReducer });
 
 export default reducer;

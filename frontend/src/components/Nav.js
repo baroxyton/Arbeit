@@ -22,9 +22,19 @@ function navMenu() {
 }
 function Nav() {
     const user = useSelector(state => state.user);
+    const notifications = useSelector(state => state.notifications);
     const dispatch = useDispatch();
+    async function fetchNotifs(){
+        const notifs = await (await fetch("/api/get_notifications")).json();
+        dispatch({type:"LOAD_NOTIFS", notifs});
+    }
+    setInterval(fetchNotifs, 5000);
+    function buildNotif(data){
+        return <NotificationItem key={data.id} text={data.text} link={data.link}/>
+    }
     useEffect(() => {
         dispatch(fetchUserData());
+        fetchNotifs();
     }, []);
     return (
         <div className="w-full h-20 bg-primary shadow-xl fixed overflow-auto">
@@ -39,16 +49,7 @@ function Nav() {
                 <Link to={"/profile/" + user.name}><div className="m-5 m-left:10 text-accent-1 text-xl font-black">{user.name}</div></Link>
             </div>
             <Menu name="notifications" style={{ transform: "translate(-50%)" }}>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="lulz xd" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
-            <NotificationItem text="this is a test" link="/post/0"></NotificationItem>
+            {notifications.list.map(notification=>buildNotif(notification))}
             </Menu>
             <Menu name="navmenu">
                 <div className="h-full w-full grid justify-center items-center">
