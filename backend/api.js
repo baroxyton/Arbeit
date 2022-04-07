@@ -52,7 +52,6 @@ function dateToDiff(date) {
 
 // Send post without sensitive information
 function frontendPostFormat(post, user) {
-    console.log({ post, }, "post");
     const postUser = new User();
     postUser.loadUser(post.user);
     const isInLikes = post.likers.includes(user.data.name);
@@ -231,7 +230,6 @@ function loggedoutApi(req, res) {
         }
         case "login": {
             const { username, password } = req.body;
-            console.log(req.body, "login");
             if (!username || !password) {
                 sendJSON({
                     status: "error",
@@ -604,7 +602,6 @@ function unbannedApi(req, res, user) {
             res.sendStatus(200);
             const post_id = param2;
             const post = database.getComment(post_id);
-            console.log({ post, post_id }, "comment found?")
             const isDisliker = Boolean(post.dislikers.includes(user.data.name));
             const isLiker = Boolean(post.likers.includes(user.data.name));
             if (!isLiker && !isDisliker) {
@@ -720,7 +717,6 @@ function adminApi(req, res, user) {
     switch (param1) {
         case "ban_user":
             {
-                console.log("banning user", param2);
                 const username = param2;
                 const banUser = new User();
                 banUser.loadUser(username);

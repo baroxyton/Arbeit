@@ -26,7 +26,6 @@ app.use("/", [function (req, res, next) {
         serveLogin(req, res);
         return;
     }
-    console.log(session);
     // successful login;
     next();
 }, function (req, res, next) {
