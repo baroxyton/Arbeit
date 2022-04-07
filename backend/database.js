@@ -10,6 +10,7 @@ if (!db.get("init")) {
         comments: [],
         sessions: [],
         notifications: [],
+        chats: [],
         init: true
     })
     initDB();
@@ -21,6 +22,7 @@ class Database {
         this.commentData = db.get("comments");
         this.sessionData = db.get("sessions");
         this.notificationData = db.get("notifications");
+        this.chatData = db.get("chats");
     }
     syncDB() {
         db.sync();
@@ -45,12 +47,17 @@ class Database {
         db.set("notifications", this.notificationData);
         this.syncDB();
     }
+    syncChats(){
+        db.set("chats", this.chatData);
+        this.syncDB();
+    }
     sync() {
         this.syncUsers();
         this.syncPosts();
         this.syncComments();
         this.syncSessions();
         this.syncNotifications();
+        this.syncChats();
     }
     findUserIndex(name) {
         const userlowercase = name.toLowerCase();
@@ -145,6 +152,18 @@ class Database {
     }
     getNotifications(name) {
         return this.notificationData.filter(notification => notification.user == name);
+    }
+    getChats(name) {
+        return this.chatData.filter(chat => chat.users.includes(name));
+    }
+    deleteChat(id) {
+        const index = this.chatData.findIndex(chat => chat.id == id);
+        this.chatData.splice(index, 1);
+        this.syncChats();
+    }
+    addChat(chat){
+        this.chatData.push(chat);
+        this.syncChats();
     }
 }
 const database = new Database();

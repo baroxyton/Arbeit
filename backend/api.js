@@ -295,6 +295,29 @@ function createComment(user, text, parentID) {
         date: Date.now()
     }
 }
+function createChat(user) {
+    return {
+        id: database.chatData.length,
+        users: [user.data.name],
+        owner: user.data.name,
+        messages: []
+    }
+}
+function addMessage(user, text, chatID) {
+    const chat = database.chatData.find(chat => chat.id == chatID);
+    if (!chat) {
+        return;
+    }
+    if (!chat.users.includes(user.data.name)) {
+        return;
+    }
+    chat.messages.push({
+        user: user.data.name,
+        text,
+        date: Date.now()
+    });
+    database.syncChats();
+}
 // API for logged in users (Possibly banned)
 // View anything, only change own data
 function loggedinApi(req, res, user) {
@@ -479,8 +502,36 @@ function loggedinApi(req, res, user) {
             res.sendStatus(200);
         }
             break;
+        case "get_chats":
+            {
+                const chats = database.getChats(user.data.name);
+                sendJSON(chats);
+            }
+            break;
+        case "get_chat_messages":
+            {
+                const chat_id = param2;
+                const chat = database.getChat(chat_id);
+                if (!chat.users.includes(user.data.name)) {
+                    sendJSON({
+                        status: "error",
+                        error: "Du bist nicht Teil dieses Chats"
+                    });
+                    return;
+                }
+                if (!chat) {
+                    sendJSON({
+                        status: "error",
+                        error: "Chat nicht gefunden"
+                    });
+                    return;
+                }
+                const messages = chat.messages;
+                sendJSON(messages);
+            }
     }
 }
+
 // Unbanned, logged in user API
 // View anything, interact
 function unbannedApi(req, res, user) {
