@@ -32,13 +32,13 @@ function Nav() {
         const notifs = await (await fetch("/api/get_notifications")).json();
         dispatch({type:"LOAD_NOTIFS", notifs});
     }
-    setInterval(fetchNotifs, 5000);
     function buildNotif(data){
         return <NotificationItem key={data.id} text={data.text} link={data.link}/>
     }
     useEffect(() => {
         dispatch(fetchUserData());
         fetchNotifs();
+        setInterval(fetchNotifs, 5000);
     }, []);
     return (
         <div className="w-full h-20 bg-primary shadow-xl fixed overflow-auto">
